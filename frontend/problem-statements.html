@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problem Statements Directory | Campus Sprint Hackathon</title>
+    <meta name="description" content="Explore demonstration problem statements across FinTech, Social Good, Web3, and Beginner tracks for Campus Sprint 2026. Official challenges unlock at kickoff.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FFF8EB',
+                        ink: '#111111',
+                        cobalt: '#2B50FF',
+                        sun: '#FFC83D',
+                        tomato: '#FF5A3C',
+                    },
+                    fontFamily: {
+                        bricolage: ['"Bricolage Grotesque"', 'sans-serif'],
+                        dmsans: ['"DM Sans"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Neo-Brutalist CSS -->
+    <style>
+        body {
+            background-color: #FFF8EB;
+            color: #111111;
+        }
+        .btn-neo {
+            box-shadow: 4px 4px 0px #111111;
+            transition: all 0.15s ease-out;
+        }
+        .btn-neo:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #111111;
+        }
+        .btn-neo:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px #111111;
+        }
+        .card-neo {
+            box-shadow: 6px 6px 0px #111111;
+            transition: all 0.25s ease;
+        }
+        .mobile-drawer { position: fixed; inset: 0; z-index: 100; pointer-events: none; }
+        .mobile-drawer.open { pointer-events: auto; }
+        .drawer-backdrop { position: absolute; inset: 0; background: rgba(17,17,17,0.5); opacity: 0; transition: opacity 0.25s ease; }
+        .mobile-drawer.open .drawer-backdrop { opacity: 1; }
+        .drawer-panel { position: absolute; right: 0; top: 0; bottom: 0; width: min(320px, 85vw); background: #FFF8EB; border-left: 4px solid #111111; box-shadow: -6px 0 0 #111111; transform: translateX(100%); transition: transform 0.25s cubic-bezier(0.22,1,0.36,1); display: flex; flex-direction: column; padding: 1.5rem; gap: 0.5rem; overflow-y: auto; }
+        .mobile-drawer.open .drawer-panel { transform: translateX(0); }
+
+        /* Filter chip styles */
+        .filter-chip {
+            border: 2px solid #111111;
+            padding: 6px 14px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 2px 2px 0px #111111;
+            background: #FFFFFF;
+            transition: all 0.1s ease;
+        }
+        .filter-chip:hover {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0px #111111;
+        }
+        .filter-chip.active {
+            background: #2B50FF;
+            color: #FFFFFF;
+            box-shadow: 3px 3px 0px #111111;
+        }
+
+        /* Detail Modal */
+        .ps-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(17, 17, 17, 0.65);
+            backdrop-filter: blur(2px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .ps-modal-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .ps-modal-card {
+            background: #FFF8EB;
+            border: 4px solid #111111;
+            box-shadow: 8px 8px 0px #111111;
+            width: 100%;
+            max-width: 680px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(20px) scale(0.97);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .ps-modal-backdrop.open .ps-modal-card {
+            transform: translateY(0) scale(1);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .btn-neo:hover, .btn-neo:active { transform: none; }
+            .card-neo { transition: none; }
+            .ps-modal-backdrop, .ps-modal-card { transition: none; }
+        }
+    </style>
+</head>
+<body class="font-dmsans antialiased overflow-x-hidden">
+
+    <!-- 1. Sticky Navigation -->
+    <nav class="sticky top-0 z-50 bg-cream border-b-2 border-ink px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- Logo -->
+            <a href="campus_sprint_hackathon.html" class="font-bricolage font-bold text-2xl tracking-tight flex items-center gap-2">
+                <div class="w-8 h-8 bg-sun border-2 border-ink rounded-full flex items-center justify-center">
+                    <div class="w-3 h-3 bg-cobalt rounded-full"></div>
+                </div>
+                Campus Sprint
+            </a>
+            
+            <!-- Desktop Links -->
+            <div class="hidden md:flex gap-8 font-bold font-bricolage text-lg">
+                <a href="campus_sprint_hackathon.html" class="hover:text-cobalt transition-colors">Home</a>
+                <a href="themes.html" class="hover:text-cobalt transition-colors">Themes</a>
+                <a href="problem-statements.html" class="text-cobalt underline decoration-2 underline-offset-4">Problems</a>
+                <a href="campus_sprint_hackathon.html#schedule" class="hover:text-cobalt transition-colors">Schedule</a>
+                <a href="campus_sprint_hackathon.html#prizes" class="hover:text-cobalt transition-colors">Prizes</a>
+                <a href="faq.html" class="hover:text-cobalt transition-colors">FAQ</a>
+                <a href="dashboard.html" class="nav-dashboard-link hover:text-cobalt transition-colors" style="display:none;">Dashboard</a>
+            </div>
+
+            <!-- Actions / Status Area -->
+            <div class="hidden sm:flex items-center gap-3" id="nav-actions-container">
+                <button id="nav-login-btn" class="font-bricolage font-bold text-base text-ink hover:text-cobalt transition-colors px-2 py-1">Sign In</button>
+                <button id="nav-cta-btn" class="btn-neo bg-cobalt text-cream font-bricolage font-bold text-lg px-6 py-2 border-2 border-ink">Register</button>
+                <button id="nav-logout-btn" style="display:none;" class="text-xs font-bold text-ink underline hover:text-tomato ml-1">Log Out</button>
+            </div>
+            
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="sm:hidden block p-2" aria-expanded="false" aria-label="Open navigation menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-ink">
+                    <path d="M3 12h18M3 6h18M3 18h18"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-drawer" class="mobile-drawer">
+        <div class="drawer-backdrop"></div>
+        <div class="drawer-panel">
+            <div class="flex justify-between items-center mb-4">
+                <span class="font-bricolage font-bold text-xl">Menu</span>
+                <button id="drawer-close-btn" aria-label="Close navigation menu" class="p-2 border-2 border-ink bg-cream hover:bg-sun transition-colors">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <a href="campus_sprint_hackathon.html" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors">Home</a>
+            <a href="themes.html" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors">Themes</a>
+            <a href="problem-statements.html" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 text-cobalt">Problems</a>
+            <a href="campus_sprint_hackathon.html#schedule" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors">Schedule</a>
+            <a href="campus_sprint_hackathon.html#prizes" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors">Prizes</a>
+            <a href="faq.html" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors">FAQ</a>
+            <a href="dashboard.html" class="nav-dashboard-link font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors" style="display:none;">Dashboard</a>
+            
+            <div class="mt-4 flex flex-col gap-2 pt-4 border-t-2 border-ink/20" id="drawer-actions-container">
+                <button id="drawer-login-btn" class="font-bricolage font-bold text-base text-center py-2 border-2 border-ink bg-white card-neo">Sign In</button>
+                <button id="drawer-cta-btn" class="btn-neo w-full bg-cobalt text-cream font-bricolage font-bold text-lg px-6 py-3 border-2 border-ink">Register</button>
+                <button id="drawer-logout-btn" style="display:none;" class="text-xs font-bold text-center underline text-ink mt-2">Log Out</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Header Section -->
+    <header class="py-14 md:py-20 px-6 max-w-7xl mx-auto border-b-2 border-ink">
+        <div class="inline-flex items-center gap-2 border-2 border-ink bg-white px-3 py-1 font-bricolage font-bold text-xs uppercase mb-4 card-neo">
+            <span class="w-2 h-2 bg-cobalt rounded-full block"></span>
+            <span>Demonstration Problem Statements</span>
+        </div>
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-4">
+            <div>
+                <h1 class="font-bricolage font-extrabold text-4xl sm:text-5xl md:text-6xl text-ink">
+                    Problem Statements Directory
+                </h1>
+                <p class="text-lg md:text-xl font-medium text-ink/80 max-w-3xl mt-3">
+                    Explore potential problem statements across all 4 tracks to prepare your architecture and tools. Note: Specific official competition challenges unlock Nov 15 at 10:00 AM kickoff.
+                </p>
+            </div>
+            <div class="bg-sun border-3 border-ink px-4 py-2 card-neo shrink-0">
+                <span class="font-bricolage font-extrabold text-xl text-ink" id="ps-count-badge">6 Challenges</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 3. Search & Filters Bar -->
+    <section class="py-8 px-6 max-w-7xl mx-auto border-b-2 border-ink/20 bg-cream">
+        <div class="space-y-6">
+            <!-- Search & Sorting Row -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="md:col-span-2 relative">
+                    <label for="ps-search-input" class="sr-only">Search problem statements</label>
+                    <input type="text" id="ps-search-input" placeholder="Search by title, description, or tags (e.g. UPI, peer tutoring, smart contracts)..." class="w-full p-3.5 pl-11 font-dmsans text-base border-2 border-ink bg-white card-neo focus:outline-none focus:border-cobalt">
+                    <span class="absolute left-3.5 top-4 text-ink/50 font-bold">🔍</span>
+                    <button type="button" id="ps-clear-search-btn" style="display:none;" class="absolute right-3.5 top-3.5 text-xs font-bold bg-cream border border-ink px-2 py-1">Clear</button>
+                </div>
+
+                <div>
+                    <label for="ps-sort-select" class="sr-only">Sort by</label>
+                    <select id="ps-sort-select" class="w-full p-3.5 font-dmsans font-bold text-sm border-2 border-ink bg-white card-neo focus:outline-none focus:border-cobalt">
+                        <option value="default">Sort: Recommended</option>
+                        <option value="alpha">Title (A to Z)</option>
+                        <option value="track">Track (A to Z)</option>
+                        <option value="difficulty">Difficulty (Easy to Hard)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="flex flex-wrap items-center gap-3">
+                <span class="font-bricolage font-bold text-xs uppercase tracking-wider text-ink/60">Filter Track:</span>
+                <div class="flex flex-wrap gap-2" id="ps-track-chips">
+                    <button class="filter-chip active" data-filter-track="all">All Tracks</button>
+                    <button class="filter-chip" data-filter-track="fintech">FinTech</button>
+                    <button class="filter-chip" data-filter-track="social-good">Social Good</button>
+                    <button class="filter-chip" data-filter-track="web3">Web3</button>
+                    <button class="filter-chip" data-filter-track="beginner">Beginner</button>
+                </div>
+            </div>
+
+            <!-- Secondary Filters Row -->
+            <div class="flex flex-wrap items-center gap-4 text-sm font-medium">
+                <div class="flex items-center gap-2">
+                    <label for="ps-diff-filter" class="font-bold text-xs uppercase text-ink/70">Difficulty:</label>
+                    <select id="ps-diff-filter" class="p-2 border-2 border-ink bg-white text-xs font-bold">
+                        <option value="all">All Levels</option>
+                        <option value="Beginner">Beginner</option>
+                        <option value="Beginner-Friendly">Beginner-Friendly</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Advanced">Advanced</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <label for="ps-domain-filter" class="font-bold text-xs uppercase text-ink/70">Domain / Category:</label>
+                    <select id="ps-domain-filter" class="p-2 border-2 border-ink bg-white text-xs font-bold max-w-xs">
+                        <option value="all">All Domains</option>
+                    </select>
+                </div>
+
+                <button type="button" id="ps-reset-all-btn" class="ml-auto text-xs font-bold text-tomato underline hover:text-ink">
+                    Reset All Filters
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Problem Statements Grid Section -->
+    <main class="py-16 px-6 max-w-7xl mx-auto">
+        <!-- Results Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="ps-cards-grid">
+            <!-- Dynamically populated from CampusSprint.Data.problemStatements -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="ps-empty-state" style="display:none;" class="text-center py-20 border-4 border-ink bg-white p-8 card-neo max-w-xl mx-auto my-12">
+            <span class="text-5xl block mb-4">🔎</span>
+            <h3 class="font-bricolage font-extrabold text-2xl mb-2 text-ink">No matching challenges found</h3>
+            <p class="font-medium text-ink/70 text-sm mb-6 max-w-md mx-auto">
+                No problem statements match your current search and filter combination. Try clearing your query or adjusting the track/difficulty filters.
+            </p>
+            <button type="button" id="ps-empty-reset-btn" class="btn-neo bg-sun text-ink font-bricolage font-bold text-base px-6 py-3 border-2 border-ink">
+                Reset All Filters
+            </button>
+        </div>
+    </main>
+
+    <!-- 5. Detail Modal -->
+    <div id="ps-detail-modal" class="ps-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="ps-modal-title">
+        <div class="ps-modal-card">
+            <!-- Header -->
+            <div class="p-6 bg-sun border-b-3 border-ink flex justify-between items-start gap-4">
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span id="ps-modal-track-badge" class="bg-cobalt text-cream text-xs font-bold px-2 py-0.5 border border-ink">TRACK</span>
+                        <span id="ps-modal-diff-badge" class="bg-white text-ink text-xs font-bold px-2 py-0.5 border border-ink">INTERMEDIATE</span>
+                        <span id="ps-modal-domain" class="text-xs font-bold text-ink/80">Category</span>
+                    </div>
+                    <h2 id="ps-modal-title" class="font-bricolage font-extrabold text-2xl text-ink leading-tight">Problem Statement Title</h2>
+                </div>
+                <button id="ps-modal-close-btn" class="w-8 h-8 bg-white border-2 border-ink card-neo flex items-center justify-center font-bold text-lg hover:bg-cream active:translate-x-0.5 active:translate-y-0.5" aria-label="Close challenge modal">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6 space-y-6">
+                <!-- Description -->
+                <div>
+                    <h3 class="font-bricolage font-bold text-lg mb-2 text-ink">Challenge Overview</h3>
+                    <p id="ps-modal-desc" class="text-sm font-medium text-ink/80 leading-relaxed"></p>
+                </div>
+
+                <!-- Evaluation Criteria -->
+                <div class="bg-white border-2 border-ink p-4 card-neo">
+                    <h3 class="font-bricolage font-bold text-base mb-3 text-cobalt flex items-center gap-1.5">
+                        <span>🎯</span> Evaluation Criteria:
+                    </h3>
+                    <ul id="ps-modal-criteria" class="space-y-2 text-xs font-medium text-ink/80"></ul>
+                </div>
+
+                <!-- Deliverables -->
+                <div class="bg-cream border-2 border-ink p-4 card-neo">
+                    <h3 class="font-bricolage font-bold text-base mb-3 text-ink flex items-center gap-1.5">
+                        <span>📦</span> Expected Deliverables:
+                    </h3>
+                    <ul id="ps-modal-deliverables" class="space-y-2 text-xs font-medium text-ink/80"></ul>
+                </div>
+
+                <!-- Tags -->
+                <div>
+                    <h3 class="font-bricolage font-bold text-xs uppercase text-ink/60 mb-2">Relevant Tags</h3>
+                    <div id="ps-modal-tags" class="flex flex-wrap gap-1.5"></div>
+                </div>
+
+                <!-- Action button -->
+                <div class="border-t-2 border-ink/20 pt-4 flex flex-wrap justify-between items-center gap-3">
+                    <button type="button" id="ps-modal-close-bottom" class="text-xs font-bold text-ink underline hover:text-cobalt">
+                        ← Back to Directory
+                    </button>
+                    <div class="flex items-center gap-3">
+                        <button type="button" id="ps-modal-select-btn" class="btn-neo bg-sun text-ink font-bricolage font-bold text-sm px-5 py-2 border-2 border-ink">
+                            Select in Dashboard 🎯
+                        </button>
+                        <button type="button" id="ps-modal-reg-btn" class="btn-neo bg-cobalt text-cream font-bricolage font-bold text-sm px-5 py-2 border-2 border-ink">
+                            Register for Hackathon →
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Bottom Banner CTA -->
+    <section class="py-16 px-6 bg-cobalt text-cream text-center border-t-2 border-ink">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="font-bricolage font-extrabold text-3xl md:text-4xl mb-3">Ready to build your solution?</h2>
+            <p class="text-lg font-medium text-cream/90 mb-6">
+                Form your team of 2 to 5 members and register to claim your spot in Campus Sprint 2026.
+            </p>
+            <button id="final-cta-btn" class="btn-neo bg-sun text-ink font-bricolage font-bold text-xl px-10 py-4 border-2 border-ink">
+                Register with CampusCrafters
+            </button>
+        </div>
+    </section>
+
+    <!-- 7. Footer -->
+    <footer class="bg-ink text-cream py-12 px-6 border-t-2 border-ink">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-2">
+                <div class="w-6 h-6 bg-sun rounded-full flex items-center justify-center">
+                    <div class="w-2 h-2 bg-cobalt rounded-full"></div>
+                </div>
+                <span class="font-bricolage font-bold text-lg">Campus Sprint</span>
+                <span class="text-xs text-cream/60 ml-2">© 2026 CampusCrafters</span>
+            </div>
+            <div class="flex flex-wrap gap-6 text-sm font-bold">
+                <a href="campus_sprint_hackathon.html" class="hover:text-sun">Home</a>
+                <a href="themes.html" class="hover:text-sun">Themes</a>
+                <a href="problem-statements.html" class="text-sun">Problem Statements</a>
+                <a href="faq.html" class="hover:text-sun">FAQ</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- CampusSprint State & Data (Phase 3) -->
+    <script src="js/utils/storage.js"></script>
+    <script src="js/state/state-config.js"></script>
+    <script src="js/state/state-manager.js"></script>
+    <script src="js/data/tracks.js"></script>
+    <script src="js/data/problem-statements.js"></script>
+    <script src="js/data/announcements.js"></script>
+    <script src="js/data/participants.js"></script>
+    <script src="js/data/teams.js"></script>
+    <script src="js/data/submissions.js"></script>
+    <script src="js/data/index.js"></script>
+
+    <!-- CampusSprint Auth & Registration (Phase 4) -->
+    <script src="js/auth/auth-service.js"></script>
+    <script src="js/auth/auth-modal.js"></script>
+    <script src="js/registration/registration-service.js"></script>
+    <script src="js/registration/waitlist-modal.js"></script>
+    <script src="js/registration/registration-stepper.js"></script>
+
+    <!-- Phase 6: Teams & Dashboard Services -->
+    <script src="js/teams/team-service.js"></script>
+    <script src="js/dashboard/dashboard-service.js"></script>
+
+    <!-- Phase 7: Problem Selection & Project Submission Services -->
+    <script src="js/submissions/problem-selection-service.js"></script>
+    <script src="js/submissions/submission-service.js"></script>
+
+    <!-- Shared Navigation & Dispatcher -->
+    <script src="js/utils/nav.js"></script>
+
+    <!-- Directory Filter & Modal Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const Data = window.CampusSprint.Data;
+            const allProblems = (Data && Data.problemStatements) ? Data.problemStatements : [];
+
+            // UI Elements
+            const grid = document.getElementById('ps-cards-grid');
+            const emptyState = document.getElementById('ps-empty-state');
+            const countBadge = document.getElementById('ps-count-badge');
+            const searchInput = document.getElementById('ps-search-input');
+            const clearSearchBtn = document.getElementById('ps-clear-search-btn');
+            const sortSelect = document.getElementById('ps-sort-select');
+            const diffSelect = document.getElementById('ps-diff-filter');
+            const domainSelect = document.getElementById('ps-domain-filter');
+            const trackChips = document.getElementById('ps-track-chips');
+            const resetAllBtn = document.getElementById('ps-reset-all-btn');
+            const emptyResetBtn = document.getElementById('ps-empty-reset-btn');
+
+            // Modal Elements
+            const modal = document.getElementById('ps-detail-modal');
+            const modalCloseBtn = document.getElementById('ps-modal-close-btn');
+            const modalCloseBottom = document.getElementById('ps-modal-close-bottom');
+            const modalRegBtn = document.getElementById('ps-modal-reg-btn');
+            const modalSelectBtn = document.getElementById('ps-modal-select-btn');
+            let lastActiveElement = null;
+            let currentDetailPs = null;
+
+            // Populate Domain filter options from dataset
+            const domains = Array.from(new Set(allProblems.map(p => p.domain).filter(Boolean)));
+            domains.sort().forEach(d => {
+                const opt = document.createElement('option');
+                opt.value = d;
+                opt.textContent = d;
+                domainSelect.appendChild(opt);
+            });
+
+            // Check URL query param e.g. ?track=fintech
+            const urlParams = new URLSearchParams(window.location.search);
+            let activeTrack = urlParams.get('track') || 'all';
+
+            // Sync track chip button to query param
+            if (activeTrack !== 'all') {
+                trackChips.querySelectorAll('.filter-chip').forEach(c => {
+                    c.classList.toggle('active', c.dataset.filterTrack === activeTrack);
+                });
+            }
+
+            // Track chip click
+            trackChips.addEventListener('click', (e) => {
+                const chip = e.target.closest('.filter-chip');
+                if (!chip) return;
+                trackChips.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                activeTrack = chip.dataset.filterTrack;
+                applyFilters();
+            });
+
+            // Input & select events
+            searchInput.addEventListener('input', () => {
+                clearSearchBtn.style.display = searchInput.value ? 'block' : 'none';
+                applyFilters();
+            });
+
+            clearSearchBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                clearSearchBtn.style.display = 'none';
+                applyFilters();
+            });
+
+            sortSelect.addEventListener('change', applyFilters);
+            diffSelect.addEventListener('change', applyFilters);
+            domainSelect.addEventListener('change', applyFilters);
+
+            function resetFilters() {
+                searchInput.value = '';
+                clearSearchBtn.style.display = 'none';
+                sortSelect.value = 'default';
+                diffSelect.value = 'all';
+                domainSelect.value = 'all';
+                activeTrack = 'all';
+                trackChips.querySelectorAll('.filter-chip').forEach(c => {
+                    c.classList.toggle('active', c.dataset.filterTrack === 'all');
+                });
+                applyFilters();
+            }
+
+            resetAllBtn.addEventListener('click', resetFilters);
+            emptyResetBtn.addEventListener('click', resetFilters);
+
+            // Filtering & Sorting Execution
+            function applyFilters() {
+                const query = searchInput.value.trim().toLowerCase();
+                const diff = diffSelect.value;
+                const domain = domainSelect.value;
+                const sort = sortSelect.value;
+
+                let filtered = allProblems.filter(ps => {
+                    // Track filter
+                    if (activeTrack !== 'all' && ps.trackId !== activeTrack) return false;
+                    // Difficulty filter
+                    if (diff !== 'all' && ps.difficulty !== diff) return false;
+                    // Domain filter
+                    if (domain !== 'all' && ps.domain !== domain) return false;
+
+                    // Query filter (title, description, tags)
+                    if (query) {
+                        const inTitle = (ps.title || '').toLowerCase().includes(query);
+                        const inDesc = (ps.description || '').toLowerCase().includes(query);
+                        const inTags = (ps.tags || []).some(t => t.toLowerCase().includes(query));
+                        if (!inTitle && !inDesc && !inTags) return false;
+                    }
+                    return true;
+                });
+
+                // Sorting
+                if (sort === 'alpha') {
+                    filtered.sort((a, b) => a.title.localeCompare(b.title));
+                } else if (sort === 'track') {
+                    filtered.sort((a, b) => a.trackId.localeCompare(b.trackId));
+                } else if (sort === 'difficulty') {
+                    const weight = { 'Beginner': 1, 'Beginner-Friendly': 1, 'Intermediate': 2, 'Advanced': 3 };
+                    filtered.sort((a, b) => (weight[a.difficulty] || 0) - (weight[b.difficulty] || 0));
+                }
+
+                renderCards(filtered);
+            }
+
+            // Render Cards into DOM
+            function renderCards(items) {
+                grid.innerHTML = '';
+                countBadge.textContent = `${items.length} Challenge${items.length === 1 ? '' : 's'}`;
+
+                if (items.length === 0) {
+                    grid.style.display = 'none';
+                    emptyState.style.display = 'block';
+                    return;
+                }
+
+                grid.style.display = 'grid';
+                emptyState.style.display = 'none';
+
+                items.forEach(ps => {
+                    const card = document.createElement('article');
+                    card.className = 'border-3 border-ink bg-white p-6 card-neo flex flex-col justify-between';
+
+                    // Track styling
+                    const trackColors = {
+                        'fintech': 'bg-cobalt text-cream',
+                        'social-good': 'bg-sun text-ink',
+                        'web3': 'bg-cobalt text-cream',
+                        'beginner': 'bg-tomato text-cream'
+                    };
+                    const trackBadgeClass = trackColors[ps.trackId] || 'bg-ink text-cream';
+
+                    card.innerHTML = `
+                        <div>
+                            <div class="flex justify-between items-start gap-2 mb-3">
+                                <span class="${trackBadgeClass} px-2.5 py-0.5 border border-ink text-xs font-bold uppercase tracking-wide">
+                                    ${ps.trackId.replace('-', ' ')}
+                                </span>
+                                <span class="bg-cream border border-ink px-2 py-0.5 text-xs font-bold text-ink">
+                                    ${ps.difficulty}
+                                </span>
+                            </div>
+                            <h3 class="font-bricolage font-bold text-xl mb-2 text-ink hover:text-cobalt transition-colors">
+                                ${ps.title}
+                            </h3>
+                            <p class="text-xs font-bold text-ink/60 mb-3">${ps.domain || ''}</p>
+                            <p class="text-sm font-medium text-ink/80 leading-relaxed mb-4 line-clamp-3">
+                                ${ps.description}
+                            </p>
+                        </div>
+                        <div>
+                            <div class="flex flex-wrap gap-1.5 mb-5">
+                                ${(ps.tags || []).slice(0, 3).map(tag => `
+                                    <span class="bg-cream border border-ink text-[10px] font-bold px-2 py-0.5">#${tag}</span>
+                                `).join('')}
+                            </div>
+                            <div class="flex gap-2">
+                                <button type="button" class="btn-neo flex-1 bg-cream hover:bg-sun text-ink font-bricolage font-bold text-xs py-2 border-2 border-ink text-center ps-view-details-btn">
+                                    View Details →
+                                </button>
+                                <button type="button" class="btn-neo flex-1 bg-cobalt text-cream font-bricolage font-bold text-xs py-2 border-2 border-ink text-center ps-card-select-btn" data-id="${ps.id}">
+                                    Select 🎯
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                    card.querySelector('.ps-view-details-btn').addEventListener('click', () => {
+                        openDetailModal(ps);
+                    });
+
+                    card.querySelector('.ps-card-select-btn').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        handleProblemSelectionClick(ps.id);
+                    });
+
+                    grid.appendChild(card);
+                });
+            }
+
+            // Detail Modal Logic
+            function openDetailModal(ps) {
+                lastActiveElement = document.activeElement;
+                currentDetailPs = ps;
+
+                document.getElementById('ps-modal-title').textContent = ps.title;
+                document.getElementById('ps-modal-desc').textContent = ps.description;
+                document.getElementById('ps-modal-domain').textContent = ps.domain || '';
+                document.getElementById('ps-modal-diff-badge').textContent = ps.difficulty;
+
+                const trackBadge = document.getElementById('ps-modal-track-badge');
+                trackBadge.textContent = ps.trackId.toUpperCase().replace('-', ' ');
+
+                // Evaluation Criteria
+                const critList = document.getElementById('ps-modal-criteria');
+                critList.innerHTML = '';
+                (ps.evaluationCriteria || []).forEach(c => {
+                    const li = document.createElement('li');
+                    li.className = 'flex items-start gap-2';
+                    li.innerHTML = `<span class="text-cobalt font-bold">✓</span> <span>${c}</span>`;
+                    critList.appendChild(li);
+                });
+
+                // Deliverables
+                const delList = document.getElementById('ps-modal-deliverables');
+                delList.innerHTML = '';
+                (ps.expectedDeliverables || []).forEach(d => {
+                    const li = document.createElement('li');
+                    li.className = 'flex items-start gap-2';
+                    li.innerHTML = `<span class="text-ink font-bold">▸</span> <span>${d}</span>`;
+                    delList.appendChild(li);
+                });
+
+                // Tags
+                const tagsContainer = document.getElementById('ps-modal-tags');
+                tagsContainer.innerHTML = '';
+                (ps.tags || []).forEach(t => {
+                    const span = document.createElement('span');
+                    span.className = 'bg-white border border-ink text-[11px] font-bold px-2 py-0.5';
+                    span.textContent = '#' + t;
+                    tagsContainer.appendChild(span);
+                });
+
+                modal.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeDetailModal() {
+                modal.classList.remove('open');
+                document.body.style.overflow = '';
+                if (lastActiveElement && typeof lastActiveElement.focus === 'function') {
+                    lastActiveElement.focus();
+                }
+            }
+
+            modalCloseBtn.addEventListener('click', closeDetailModal);
+            modalCloseBottom.addEventListener('click', closeDetailModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeDetailModal();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.classList.contains('open')) {
+                    closeDetailModal();
+                }
+            });
+
+            function handleProblemSelectionClick(psId) {
+                if (!psId) return;
+                const SM = window.CampusSprint && window.CampusSprint.stateManager;
+                const Config = window.CampusSprint && window.CampusSprint.Config;
+                const visitorState = SM ? SM.getVisitorState() : 'logged_out';
+
+                if (visitorState === Config.VISITOR_STATES.LOGGED_OUT) {
+                    if (window.CampusSprint.AuthModal) {
+                        window.CampusSprint.AuthModal.open('signup');
+                    }
+                } else if (visitorState === Config.VISITOR_STATES.LOGGED_IN_UNREGISTERED) {
+                    if (window.CampusSprint.RegistrationStepper) {
+                        window.CampusSprint.RegistrationStepper.open();
+                    }
+                } else {
+                    window.location.href = `dashboard.html?select=${encodeURIComponent(psId)}#problem-selection`;
+                }
+            }
+
+            modalRegBtn.addEventListener('click', () => {
+                closeDetailModal();
+                if (window.CampusSprint && typeof window.CampusSprint.handleCtaAction === 'function') {
+                    window.CampusSprint.handleCtaAction('register');
+                }
+            });
+
+            if (modalSelectBtn) {
+                modalSelectBtn.addEventListener('click', () => {
+                    if (currentDetailPs) {
+                        const id = currentDetailPs.id;
+                        closeDetailModal();
+                        handleProblemSelectionClick(id);
+                    }
+                });
+            }
+
+            // Initial Filter Run
+            applyFilters();
+        });
+    </script>
+
+    <!-- Developer Switcher (dev only, ?dev=1) -->
+    <script src="js/dev/state-switcher.js"></script>
+</body>
+</html>
+

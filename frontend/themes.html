@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Themes &amp; Tracks | Campus Sprint Hackathon</title>
+    <meta name="description" content="Explore the four official innovation tracks for Campus Sprint: FinTech, Social Good, Web3, and Beginner. Find project inspiration for your 24-hour sprint.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FFF8EB',
+                        ink: '#111111',
+                        cobalt: '#2B50FF',
+                        sun: '#FFC83D',
+                        tomato: '#FF5A3C',
+                    },
+                    fontFamily: {
+                        bricolage: ['"Bricolage Grotesque"', 'sans-serif'],
+                        dmsans: ['"DM Sans"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Neo-Brutalist CSS -->
+    <style>
+        body {
+            background-color: #FFF8EB;
+            color: #111111;
+        }
+        .btn-neo {
+            box-shadow: 4px 4px 0px #111111;
+            transition: all 0.15s ease-out;
+        }
+        .btn-neo:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #111111;
+        }
+        .btn-neo:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px #111111;
+        }
+        .card-neo {
+            box-shadow: 6px 6px 0px #111111;
+            transition: all 0.25s ease;
+        }
+        .mobile-drawer { position: fixed; inset: 0; z-index: 100; pointer-events: none; }
+        .mobile-drawer.open { pointer-events: auto; }
+        .drawer-backdrop { position: absolute; inset: 0; background: rgba(17,17,17,0.5); opacity: 0; transition: opacity 0.25s ease; }
+        .mobile-drawer.open .drawer-backdrop { opacity: 1; }
+        .drawer-panel { position: absolute; right: 0; top: 0; bottom: 0; width: min(320px, 85vw); background: #FFF8EB; border-left: 4px solid #111111; box-shadow: -6px 0 0 #111111; transform: translateX(100%); transition: transform 0.25s cubic-bezier(0.22,1,0.36,1); display: flex; flex-direction: column; padding: 1.5rem; gap: 0.5rem; overflow-y: auto; }
+        .mobile-drawer.open .drawer-panel { transform: translateX(0); }
+
+        @media (prefers-reduced-motion: reduce) {
+            .btn-neo:hover, .btn-neo:active { transform: none; }
+            .card-neo { transition: none; }
+        }
+    </style>
+</head>
+<body class="font-dmsans antialiased overflow-x-hidden">
+
+    <!-- 1. Sticky Navigation -->
+    <nav class="sticky top-0 z-50 bg-cream border-b-2 border-ink px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- Logo -->
+            <a href="campus_sprint_hackathon.html" class="font-bricolage font-bold text-2xl tracking-tight flex items-center gap-2">
+                <div class="w-8 h-8 bg-sun border-2 border-ink rounded-full flex items-center justify-center">
+                    <div class="w-3 h-3 bg-cobalt rounded-full"></div>
+                </div>
+                Campus Sprint
+            </a>
+            
+            <!-- Desktop Links -->
+            <div class="hidden md:flex gap-8 font-bold font-bricolage text-lg">
+                <a href="campus_sprint_hackathon.html" class="hover:text-cobalt transition-colors">Home</a>
+                <a href="themes.html" class="text-cobalt underline decoration-2 underline-offset-4">Themes</a>
+                <a href="problem-statements.html" class="hover:text-cobalt transition-colors">Problems</a>
+                <a href="campus_sprint_hackathon.html#schedule" class="hover:text-cobalt transition-colors">Schedule</a>
+                <a href="campus_sprint_hackathon.html#prizes" class="hover:text-cobalt transition-colors">Prizes</a>
+                <a href="faq.html" class="hover:text-cobalt transition-colors">FAQ</a>
+                <a href="dashboard.html" class="nav-dashboard-link hover:text-cobalt transition-colors" style="display:none;">Dashboard</a>
+            </div>
+
+            <!-- Actions / Status Area -->
+            <div class="hidden sm:flex items-center gap-3" id="nav-actions-container">
+                <button id="nav-login-btn" class="font-bricolage font-bold text-base text-ink hover:text-cobalt transition-colors px-2 py-1">Sign In</button>
+                <button id="nav-cta-btn" class="btn-neo bg-cobalt text-cream font-bricolage font-bold text-lg px-6 py-2 border-2 border-ink">Register</button>
+                <button id="nav-logout-btn" style="display:none;" class="text-xs font-bold text-ink underline hover:text-tomato ml-1">Log Out</button>
+            </div>
+            
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="sm:hidden block p-2" aria-expanded="false" aria-label="Open navigation menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-ink">
+                    <path d="M3 12h18M3 6h18M3 18h18"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-drawer" class="mobile-drawer">
+        <div class="drawer-backdrop"></div>
+        <div class="drawer-panel">
+            <div class="flex justify-between items-center mb-4">
+                <span class="font-bricolage font-bold text-xl">Menu</span>
+                <button id="drawer-close-btn" aria-label="Close navigation menu" class="p-2 border-2 border-ink bg-cream hover:bg-sun transition-colors">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <a href="campus_sprint_hackathon.html" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors">Home</a>
+            <a href="themes.html" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 text-cobalt">Themes</a>
+            <a href="problem-statements.html" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors">Problems</a>
+            <a href="campus_sprint_hackathon.html#schedule" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors">Schedule</a>
+            <a href="campus_sprint_hackathon.html#prizes" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors">Prizes</a>
+            <a href="faq.html" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors">FAQ</a>
+            <a href="dashboard.html" class="nav-dashboard-link font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors" style="display:none;">Dashboard</a>
+            
+            <div class="mt-4 flex flex-col gap-2 pt-4 border-t-2 border-ink/20" id="drawer-actions-container">
+                <button id="drawer-login-btn" class="font-bricolage font-bold text-base text-center py-2 border-2 border-ink bg-white card-neo">Sign In</button>
+                <button id="drawer-cta-btn" class="btn-neo w-full bg-cobalt text-cream font-bricolage font-bold text-lg px-6 py-3 border-2 border-ink">Register</button>
+                <button id="drawer-logout-btn" style="display:none;" class="text-xs font-bold text-center underline text-ink mt-2">Log Out</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Hero Section -->
+    <header class="py-16 md:py-24 px-6 max-w-7xl mx-auto border-b-2 border-ink">
+        <div class="inline-flex items-center gap-2 border-2 border-ink bg-sun px-3 py-1 font-bricolage font-bold text-xs uppercase mb-6 card-neo">
+            <span>⚡ 4 Innovation Tracks</span>
+            <span>•</span>
+            <span>24-Hour Online Sprint</span>
+        </div>
+        <h1 class="font-bricolage font-extrabold text-5xl sm:text-6xl md:text-7xl leading-tight mb-6">
+            Explore the Tracks.
+        </h1>
+        <p class="text-xl md:text-2xl font-medium text-ink/80 max-w-3xl leading-relaxed mb-8">
+            Every team chooses one primary track to focus their project. Whether you want to fix how money moves, build for civic impact, explore the decentralized web, or write your first line of hackathon code — there is a lane built for you.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4">
+            <a href="problem-statements.html" class="btn-neo bg-cobalt text-cream font-bricolage font-bold text-lg px-8 py-4 border-2 border-ink text-center">
+                Browse Problem Statements →
+            </a>
+            <button id="hero-cta-btn" class="btn-neo bg-white text-ink font-bricolage font-bold text-lg px-8 py-4 border-2 border-ink text-center">
+                Register with CampusCrafters
+            </button>
+        </div>
+    </header>
+
+    <!-- 3. Tracks Deep Dive Section -->
+    <main class="py-20 px-6 max-w-7xl mx-auto">
+        <div class="space-y-16">
+
+            <!-- TRACK 1: FinTech -->
+            <article id="fintech" class="border-4 border-ink bg-cream p-8 md:p-12 card-neo relative overflow-hidden">
+                <div class="flex flex-col lg:flex-row gap-8 justify-between items-start">
+                    <div class="lg:w-3/5">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="w-10 h-10 bg-cobalt text-cream border-2 border-ink rounded-full flex items-center justify-center font-bold text-xl">₹</span>
+                            <span class="bg-cobalt text-cream px-3 py-1 border-2 border-ink font-bricolage font-bold text-sm uppercase">Track 01</span>
+                            <h2 class="font-bricolage font-extrabold text-3xl md:text-4xl text-ink">FinTech</h2>
+                        </div>
+                        <p class="text-xl font-bold text-cobalt mb-4">Reimagine how money moves.</p>
+                        <p class="text-base md:text-lg font-medium text-ink/80 leading-relaxed mb-6">
+                            Build tools that make financial services smarter, fairer, and more accessible. Think payments, student budgeting, peer lending, micro-savings, or financial literacy for underserved communities.
+                        </p>
+
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="bg-white border-2 border-ink px-3 py-1 font-bold text-xs">Payments</span>
+                            <span class="bg-white border-2 border-ink px-3 py-1 font-bold text-xs">Budgeting</span>
+                            <span class="bg-white border-2 border-ink px-3 py-1 font-bold text-xs">Lending</span>
+                            <span class="bg-white border-2 border-ink px-3 py-1 font-bold text-xs">Micro-finance</span>
+                            <span class="bg-white border-2 border-ink px-3 py-1 font-bold text-xs">UPI Integration</span>
+                        </div>
+
+                        <a href="problem-statements.html?track=fintech" class="font-bricolage font-bold text-cobalt underline decoration-2 underline-offset-4 hover:text-ink inline-flex items-center gap-1">
+                            Explore FinTech Problem Statements →
+                        </a>
+                    </div>
+
+                    <!-- Example Themes Card -->
+                    <div class="lg:w-2/5 w-full bg-white border-3 border-ink p-6 card-neo">
+                        <h3 class="font-bricolage font-bold text-lg mb-3 text-ink flex items-center gap-2">
+                            <span>💡</span> Project Inspiration Themes:
+                        </h3>
+                        <ul class="space-y-3 text-sm font-medium text-ink/80">
+                            <li class="flex items-start gap-2">
+                                <span class="text-cobalt font-bold">▸</span> P2P lending platform for student study materials
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-cobalt font-bold">▸</span> Group expense splitting app with automated UPI payment links
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-cobalt font-bold">▸</span> Financial literacy interactive game for first-year undergraduates
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-cobalt font-bold">▸</span> Automated micro-savings tool with discretionary spend nudges
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </article>
+
+            <!-- TRACK 2: Social Good -->
+            <article id="social-good" class="border-4 border-ink bg-white p-8 md:p-12 card-neo relative overflow-hidden">
+                <div class="flex flex-col lg:flex-row gap-8 justify-between items-start">
+                    <div class="lg:w-3/5">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="w-10 h-10 bg-sun text-ink border-2 border-ink rounded-full flex items-center justify-center font-bold text-xl">🌱</span>
+                            <span class="bg-sun text-ink px-3 py-1 border-2 border-ink font-bricolage font-bold text-sm uppercase">Track 02</span>
+                            <h2 class="font-bricolage font-extrabold text-3xl md:text-4xl text-ink">Social Good</h2>
+                        </div>
+                        <p class="text-xl font-bold text-ink mb-4">Use tech as a force for community impact.</p>
+                        <p class="text-base md:text-lg font-medium text-ink/80 leading-relaxed mb-6">
+                            Tackle real problems in education, healthcare access, environment, or civic life. Projects should demonstrate meaningful potential benefit to a campus, neighborhood, or wider community group.
+                        </p>
+
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="bg-cream border-2 border-ink px-3 py-1 font-bold text-xs">Education</span>
+                            <span class="bg-cream border-2 border-ink px-3 py-1 font-bold text-xs">HealthTech</span>
+                            <span class="bg-cream border-2 border-ink px-3 py-1 font-bold text-xs">Environment</span>
+                            <span class="bg-cream border-2 border-ink px-3 py-1 font-bold text-xs">Civic Tech</span>
+                            <span class="bg-cream border-2 border-ink px-3 py-1 font-bold text-xs">Accessibility</span>
+                        </div>
+
+                        <a href="problem-statements.html?track=social-good" class="font-bricolage font-bold text-cobalt underline decoration-2 underline-offset-4 hover:text-ink inline-flex items-center gap-1">
+                            Explore Social Good Problem Statements →
+                        </a>
+                    </div>
+
+                    <!-- Example Themes Card -->
+                    <div class="lg:w-2/5 w-full bg-cream border-3 border-ink p-6 card-neo">
+                        <h3 class="font-bricolage font-bold text-lg mb-3 text-ink flex items-center gap-2">
+                            <span>💡</span> Project Inspiration Themes:
+                        </h3>
+                        <ul class="space-y-3 text-sm font-medium text-ink/80">
+                            <li class="flex items-start gap-2">
+                                <span class="text-cobalt font-bold">▸</span> Peer tutoring matchmaking platform with verified subject ratings
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-cobalt font-bold">▸</span> Campus sustainability tracker with meal-tray and recycling points
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-cobalt font-bold">▸</span> Mental wellness daily check-in and anonymous counseling router
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-cobalt font-bold">▸</span> Local community volunteer coordination and emergency broadcast app
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </article>
+
+            <!-- TRACK 3: Web3 -->
+            <article id="web3" class="border-4 border-ink bg-cream p-8 md:p-12 card-neo relative overflow-hidden">
+                <div class="flex flex-col lg:flex-row gap-8 justify-between items-start">
+                    <div class="lg:w-3/5">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="w-10 h-10 bg-cobalt text-cream border-2 border-ink rounded-full flex items-center justify-center font-bold text-xl">🌐</span>
+                            <span class="bg-cobalt text-cream px-3 py-1 border-2 border-ink font-bricolage font-bold text-sm uppercase">Track 03</span>
+                            <h2 class="font-bricolage font-extrabold text-3xl md:text-4xl text-ink">Web3 &amp; Decentralization</h2>
+                        </div>
+                        <p class="text-xl font-bold text-cobalt mb-4">Build the next layer of the open internet.</p>
+                        <p class="text-base md:text-lg font-medium text-ink/80 leading-relaxed mb-6">
+                            Explore decentralized applications, smart contracts, verifiable credentials, and decentralized storage. Projects must provide a working interactive frontend demo connecting to a testnet or mock node.
+                        </p>
+
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="bg-white border-2 border-ink px-3 py-1 font-bold text-xs">Smart Contracts</span>
+                            <span class="bg-white border-2 border-ink px-3 py-1 font-bold text-xs">Credentials</span>
+                            <span class="bg-white border-2 border-ink px-3 py-1 font-bold text-xs">DAOs</span>
+                            <span class="bg-white border-2 border-ink px-3 py-1 font-bold text-xs">DeFi</span>
+                            <span class="bg-white border-2 border-ink px-3 py-1 font-bold text-xs">Soulbound Tokens</span>
+                        </div>
+
+                        <a href="problem-statements.html?track=web3" class="font-bricolage font-bold text-cobalt underline decoration-2 underline-offset-4 hover:text-ink inline-flex items-center gap-1">
+                            Explore Web3 Problem Statements →
+                        </a>
+                    </div>
+
+                    <!-- Example Themes Card -->
+                    <div class="lg:w-2/5 w-full bg-white border-3 border-ink p-6 card-neo">
+                        <h3 class="font-bricolage font-bold text-lg mb-3 text-ink flex items-center gap-2">
+                            <span>💡</span> Project Inspiration Themes:
+                        </h3>
+                        <ul class="space-y-3 text-sm font-medium text-ink/80">
+                            <li class="flex items-start gap-2">
+                                <span class="text-cobalt font-bold">▸</span> On-chain student credential verification protocol
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-cobalt font-bold">▸</span> College club treasury and proposal voting DAO portal
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-cobalt font-bold">▸</span> Decentralized peer code review and academic attribution
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-cobalt font-bold">▸</span> NFT-based hackathon proof-of-attendance badge issuer
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </article>
+
+            <!-- TRACK 4: Beginner -->
+            <article id="beginner" class="border-4 border-ink bg-tomato text-cream p-8 md:p-12 card-neo relative overflow-hidden">
+                <div class="flex flex-col lg:flex-row gap-8 justify-between items-start">
+                    <div class="lg:w-3/5">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="w-10 h-10 bg-white text-ink border-2 border-ink rounded-full flex items-center justify-center font-bold text-xl">🚀</span>
+                            <span class="bg-white text-ink px-3 py-1 border-2 border-ink font-bricolage font-bold text-sm uppercase">Track 04</span>
+                            <h2 class="font-bricolage font-extrabold text-3xl md:text-4xl text-cream">Beginner Track</h2>
+                        </div>
+                        <p class="text-xl font-bold text-sun mb-4">First hackathon? This track is made for you.</p>
+                        <p class="text-base md:text-lg font-medium text-cream/90 leading-relaxed mb-6">
+                            A dedicated, welcoming track for first-time hackers. Includes dedicated Discord mentors, guided Git &amp; project structuring workshops, and evaluation criteria focused on learning progress, creativity, and completion.
+                        </p>
+
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="bg-white text-ink border-2 border-ink px-3 py-1 font-bold text-xs">Mentored</span>
+                            <span class="bg-white text-ink border-2 border-ink px-3 py-1 font-bold text-xs">Guided</span>
+                            <span class="bg-white text-ink border-2 border-ink px-3 py-1 font-bold text-xs">Any Skill Level</span>
+                            <span class="bg-white text-ink border-2 border-ink px-3 py-1 font-bold text-xs">Workshops</span>
+                        </div>
+
+                        <a href="problem-statements.html?track=beginner" class="font-bricolage font-bold text-sun underline decoration-2 underline-offset-4 hover:text-white inline-flex items-center gap-1">
+                            Explore Beginner Problem Statements →
+                        </a>
+                    </div>
+
+                    <!-- Example Themes Card -->
+                    <div class="lg:w-2/5 w-full bg-white text-ink border-3 border-ink p-6 card-neo">
+                        <h3 class="font-bricolage font-bold text-lg mb-3 text-ink flex items-center gap-2">
+                            <span>💡</span> Project Inspiration Themes:
+                        </h3>
+                        <ul class="space-y-3 text-sm font-medium text-ink/80">
+                            <li class="flex items-start gap-2">
+                                <span class="text-tomato font-bold">▸</span> Personal developer portfolio generator for students
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-tomato font-bold">▸</span> Interactive college quiz web app with timer and score share
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-tomato font-bold">▸</span> To-do and assignment manager with streak reminders
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-tomato font-bold">▸</span> Campus event Discord reminder bot with simple slash commands
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <!-- 4. Choosing a Track Guide Section -->
+    <section class="py-16 px-6 bg-sun border-t-2 border-ink">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="font-bricolage font-extrabold text-3xl md:text-4xl mb-6 text-ink">
+                How Track Selection Works
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-ink font-medium">
+                <div class="bg-white border-2 border-ink p-6 card-neo">
+                    <span class="w-8 h-8 bg-cobalt text-cream rounded-full flex items-center justify-center font-bold text-sm mb-3">1</span>
+                    <h3 class="font-bricolage font-bold text-xl mb-2">Preferred Track</h3>
+                    <p class="text-sm text-ink/80">During registration, select your preferred track. This helps organizers assign appropriate mentors to your team channels.</p>
+                </div>
+                <div class="bg-white border-2 border-ink p-6 card-neo">
+                    <span class="w-8 h-8 bg-cobalt text-cream rounded-full flex items-center justify-center font-bold text-sm mb-3">2</span>
+                    <h3 class="font-bricolage font-bold text-xl mb-2">Cross-Skill Teams</h3>
+                    <p class="text-sm text-ink/80">Teammates can have different skill levels. A team with a first-time coder and experienced backend dev can compete in any track.</p>
+                </div>
+                <div class="bg-white border-2 border-ink p-6 card-neo">
+                    <span class="w-8 h-8 bg-cobalt text-cream rounded-full flex items-center justify-center font-bold text-sm mb-3">3</span>
+                    <h3 class="font-bricolage font-bold text-xl mb-2">Final Confirmation</h3>
+                    <p class="text-sm text-ink/80">Official track selection is locked when you submit your project repository and demo before the 24-hour sprint deadline.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Final CTA Banner -->
+    <section class="py-20 px-6 bg-cobalt text-cream text-center border-t-2 border-ink">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="font-bricolage font-extrabold text-4xl md:text-5xl mb-4">Ready to choose your track?</h2>
+            <p class="text-xl font-medium text-cream/90 mb-8 max-w-2xl mx-auto">
+                Secure your spot in Campus Sprint 2026. 24 hours of building, learning, and competing for track prizes.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button id="final-cta-btn" class="btn-neo bg-sun text-ink font-bricolage font-bold text-xl px-10 py-4 border-2 border-ink">
+                    Register with CampusCrafters
+                </button>
+                <a href="problem-statements.html" class="btn-neo bg-white text-ink font-bricolage font-bold text-xl px-8 py-4 border-2 border-ink">
+                    View Problem Directory
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Footer -->
+    <footer class="bg-ink text-cream py-12 px-6 border-t-2 border-ink">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-2">
+                <div class="w-6 h-6 bg-sun rounded-full flex items-center justify-center">
+                    <div class="w-2 h-2 bg-cobalt rounded-full"></div>
+                </div>
+                <span class="font-bricolage font-bold text-lg">Campus Sprint</span>
+                <span class="text-xs text-cream/60 ml-2">© 2026 CampusCrafters</span>
+            </div>
+            <div class="flex flex-wrap gap-6 text-sm font-bold">
+                <a href="campus_sprint_hackathon.html" class="hover:text-sun">Home</a>
+                <a href="themes.html" class="text-sun">Themes</a>
+                <a href="problem-statements.html" class="hover:text-sun">Problem Statements</a>
+                <a href="faq.html" class="hover:text-sun">FAQ</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- CampusSprint State & Data (Phase 3) -->
+    <script src="js/utils/storage.js"></script>
+    <script src="js/state/state-config.js"></script>
+    <script src="js/state/state-manager.js"></script>
+    <script src="js/data/tracks.js"></script>
+    <script src="js/data/problem-statements.js"></script>
+    <script src="js/data/announcements.js"></script>
+    <script src="js/data/participants.js"></script>
+    <script src="js/data/teams.js"></script>
+    <script src="js/data/submissions.js"></script>
+    <script src="js/data/index.js"></script>
+
+    <!-- CampusSprint Auth & Registration (Phase 4) -->
+    <script src="js/auth/auth-service.js"></script>
+    <script src="js/auth/auth-modal.js"></script>
+    <script src="js/registration/registration-service.js"></script>
+    <script src="js/registration/waitlist-modal.js"></script>
+    <script src="js/registration/registration-stepper.js"></script>
+
+    <!-- Phase 6: Teams & Dashboard Services -->
+    <script src="js/teams/team-service.js"></script>
+    <script src="js/dashboard/dashboard-service.js"></script>
+
+    <!-- Phase 7: Problem Selection & Project Submission Services -->
+    <script src="js/submissions/problem-selection-service.js"></script>
+    <script src="js/submissions/submission-service.js"></script>
+
+    <!-- Shared Navigation & Dispatcher -->
+    <script src="js/utils/nav.js"></script>
+
+    <!-- Developer Switcher (dev only, ?dev=1) -->
+    <script src="js/dev/state-switcher.js"></script>
+</body>
+</html>
+
