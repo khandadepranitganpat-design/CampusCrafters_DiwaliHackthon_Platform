@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frequently Asked Questions | Campus Sprint Hackathon</title>
+    <meta name="description" content="Comprehensive FAQ for Campus Sprint 24-Hour Online Hackathon. Learn about team formation, tracks, online rules, submissions, and judging.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FFF8EB',
+                        ink: '#111111',
+                        cobalt: '#2B50FF',
+                        sun: '#FFC83D',
+                        tomato: '#FF5A3C',
+                    },
+                    fontFamily: {
+                        bricolage: ['"Bricolage Grotesque"', 'sans-serif'],
+                        dmsans: ['"DM Sans"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Neo-Brutalist CSS -->
+    <style>
+        body {
+            background-color: #FFF8EB;
+            color: #111111;
+        }
+        .btn-neo {
+            box-shadow: 4px 4px 0px #111111;
+            transition: all 0.15s ease-out;
+        }
+        .btn-neo:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #111111;
+        }
+        .btn-neo:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px #111111;
+        }
+        .card-neo {
+            box-shadow: 6px 6px 0px #111111;
+            transition: all 0.25s ease;
+        }
+        .mobile-drawer { position: fixed; inset: 0; z-index: 100; pointer-events: none; }
+        .mobile-drawer.open { pointer-events: auto; }
+        .drawer-backdrop { position: absolute; inset: 0; background: rgba(17,17,17,0.5); opacity: 0; transition: opacity 0.25s ease; }
+        .mobile-drawer.open .drawer-backdrop { opacity: 1; }
+        .drawer-panel { position: absolute; right: 0; top: 0; bottom: 0; width: min(320px, 85vw); background: #FFF8EB; border-left: 4px solid #111111; box-shadow: -6px 0 0 #111111; transform: translateX(100%); transition: transform 0.25s cubic-bezier(0.22,1,0.36,1); display: flex; flex-direction: column; padding: 1.5rem; gap: 0.5rem; overflow-y: auto; }
+        .mobile-drawer.open .drawer-panel { transform: translateX(0); }
+
+        /* Category Filter Chips */
+        .cat-chip {
+            border: 2px solid #111111;
+            padding: 6px 14px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 2px 2px 0px #111111;
+            background: #FFFFFF;
+            transition: all 0.1s ease;
+        }
+        .cat-chip:hover {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0px #111111;
+        }
+        .cat-chip.active {
+            background: #2B50FF;
+            color: #FFFFFF;
+            box-shadow: 3px 3px 0px #111111;
+        }
+
+        /* Accordion CSS Grid Animation */
+        .faq-accordion-content {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.25s ease-out;
+        }
+        .faq-accordion-content.open {
+            grid-template-rows: 1fr;
+        }
+        .faq-accordion-inner {
+            overflow: hidden;
+        }
+        .icon-toggle {
+            transition: transform 0.25s ease;
+            display: inline-block;
+        }
+        .icon-toggle.open {
+            transform: rotate(45deg);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .btn-neo:hover, .btn-neo:active { transform: none; }
+            .card-neo { transition: none; }
+            .faq-accordion-content { transition: none; }
+            .icon-toggle { transition: none; }
+        }
+    </style>
+</head>
+<body class="font-dmsans antialiased overflow-x-hidden">
+
+    <!-- 1. Sticky Navigation -->
+    <nav class="sticky top-0 z-50 bg-cream border-b-2 border-ink px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- Logo -->
+            <a href="campus_sprint_hackathon.html" class="font-bricolage font-bold text-2xl tracking-tight flex items-center gap-2">
+                <div class="w-8 h-8 bg-sun border-2 border-ink rounded-full flex items-center justify-center">
+                    <div class="w-3 h-3 bg-cobalt rounded-full"></div>
+                </div>
+                Campus Sprint
+            </a>
+            
+            <!-- Desktop Links -->
+            <div class="hidden md:flex gap-8 font-bold font-bricolage text-lg">
+                <a href="campus_sprint_hackathon.html" class="hover:text-cobalt transition-colors">Home</a>
+                <a href="themes.html" class="hover:text-cobalt transition-colors">Themes</a>
+                <a href="problem-statements.html" class="hover:text-cobalt transition-colors">Problems</a>
+                <a href="campus_sprint_hackathon.html#schedule" class="hover:text-cobalt transition-colors">Schedule</a>
+                <a href="campus_sprint_hackathon.html#prizes" class="hover:text-cobalt transition-colors">Prizes</a>
+                <a href="faq.html" class="text-cobalt underline decoration-2 underline-offset-4">FAQ</a>
+                <a href="dashboard.html" class="nav-dashboard-link hover:text-cobalt transition-colors" style="display:none;">Dashboard</a>
+            </div>
+
+            <!-- Actions / Status Area -->
+            <div class="hidden sm:flex items-center gap-3" id="nav-actions-container">
+                <button id="nav-login-btn" class="font-bricolage font-bold text-base text-ink hover:text-cobalt transition-colors px-2 py-1">Sign In</button>
+                <button id="nav-cta-btn" class="btn-neo bg-cobalt text-cream font-bricolage font-bold text-lg px-6 py-2 border-2 border-ink">Register</button>
+                <button id="nav-logout-btn" style="display:none;" class="text-xs font-bold text-ink underline hover:text-tomato ml-1">Log Out</button>
+            </div>
+            
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="sm:hidden block p-2" aria-expanded="false" aria-label="Open navigation menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-ink">
+                    <path d="M3 12h18M3 6h18M3 18h18"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-drawer" class="mobile-drawer">
+        <div class="drawer-backdrop"></div>
+        <div class="drawer-panel">
+            <div class="flex justify-between items-center mb-4">
+                <span class="font-bricolage font-bold text-xl">Menu</span>
+                <button id="drawer-close-btn" aria-label="Close navigation menu" class="p-2 border-2 border-ink bg-cream hover:bg-sun transition-colors">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <a href="campus_sprint_hackathon.html" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors">Home</a>
+            <a href="themes.html" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors">Themes</a>
+            <a href="problem-statements.html" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors">Problems</a>
+            <a href="campus_sprint_hackathon.html#schedule" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors">Schedule</a>
+            <a href="campus_sprint_hackathon.html#prizes" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors">Prizes</a>
+            <a href="faq.html" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 text-cobalt">FAQ</a>
+            <a href="dashboard.html" class="nav-dashboard-link font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors" style="display:none;">Dashboard</a>
+            
+            <div class="mt-4 flex flex-col gap-2 pt-4 border-t-2 border-ink/20" id="drawer-actions-container">
+                <button id="drawer-login-btn" class="font-bricolage font-bold text-base text-center py-2 border-2 border-ink bg-white card-neo">Sign In</button>
+                <button id="drawer-cta-btn" class="btn-neo w-full bg-cobalt text-cream font-bricolage font-bold text-lg px-6 py-3 border-2 border-ink">Register</button>
+                <button id="drawer-logout-btn" style="display:none;" class="text-xs font-bold text-center underline text-ink mt-2">Log Out</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Header Section -->
+    <header class="py-14 md:py-20 px-6 max-w-7xl mx-auto border-b-2 border-ink">
+        <div class="inline-flex items-center gap-2 border-2 border-ink bg-sun px-3 py-1 font-bricolage font-bold text-xs uppercase mb-4 card-neo">
+            <span>❓ Knowledge Base</span>
+            <span>•</span>
+            <span>24-Hour Online Sprint</span>
+        </div>
+        <h1 class="font-bricolage font-extrabold text-4xl sm:text-5xl md:text-6xl text-ink leading-tight mb-4">
+            Frequently Asked Questions
+        </h1>
+        <p class="text-lg md:text-xl font-medium text-ink/80 max-w-3xl leading-relaxed">
+            Have questions about Campus Sprint? Find detailed answers on eligibility, online team rules, tracks, submission formats, and judging criteria below.
+        </p>
+    </header>
+
+    <!-- 3. Search & Category Filters Bar -->
+    <section class="py-8 px-6 max-w-7xl mx-auto border-b-2 border-ink/20 bg-cream">
+        <div class="space-y-6">
+            <!-- Search & Expand/Collapse Row -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-between items-center">
+                <div class="relative w-full sm:max-w-xl">
+                    <label for="faq-search-input" class="sr-only">Search questions</label>
+                    <input type="text" id="faq-search-input" placeholder="Search questions (e.g. team size, discord, beginner, prizes)..." class="w-full p-3.5 pl-11 font-dmsans text-base border-2 border-ink bg-white card-neo focus:outline-none focus:border-cobalt">
+                    <span class="absolute left-3.5 top-4 text-ink/50 font-bold">🔍</span>
+                    <button type="button" id="faq-clear-search-btn" style="display:none;" class="absolute right-3.5 top-3.5 text-xs font-bold bg-cream border border-ink px-2 py-1">Clear</button>
+                </div>
+
+                <div class="flex gap-2 shrink-0">
+                    <button type="button" id="faq-expand-all-btn" class="border-2 border-ink bg-white px-3 py-2 text-xs font-bold card-neo hover:bg-cream">
+                        Expand All
+                    </button>
+                    <button type="button" id="faq-collapse-all-btn" class="border-2 border-ink bg-white px-3 py-2 text-xs font-bold card-neo hover:bg-cream">
+                        Collapse All
+                    </button>
+                </div>
+            </div>
+
+            <!-- Categories -->
+            <div class="flex flex-wrap gap-2" id="faq-categories">
+                <button class="cat-chip active" data-category="all">All Questions</button>
+                <button class="cat-chip" data-category="about">About Event</button>
+                <button class="cat-chip" data-category="eligibility">Eligibility &amp; Reg</button>
+                <button class="cat-chip" data-category="teams">Teams &amp; Size</button>
+                <button class="cat-chip" data-category="tracks">Tracks &amp; Themes</button>
+                <button class="cat-chip" data-category="online">Online Format</button>
+                <button class="cat-chip" data-category="rules">Rules &amp; Code</button>
+                <button class="cat-chip" data-category="judging">Judging &amp; Prizes</button>
+                <button class="cat-chip" data-category="support">Help &amp; Support</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. FAQ Accordion Container -->
+    <main class="py-16 px-6 max-w-4xl mx-auto">
+        <div class="space-y-4" id="faq-accordion-list">
+
+            <!-- 1. About the Hackathon -->
+            <div class="border-2 border-ink bg-white card-neo faq-item" data-category="about">
+                <button class="faq-accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl hover:bg-cream transition-colors" aria-expanded="false">
+                    <span>What is Campus Sprint?</span>
+                    <span class="text-cobalt icon-toggle font-black text-3xl leading-none ml-4">+</span>
+                </button>
+                <div class="faq-accordion-content">
+                    <div class="faq-accordion-inner px-6 pb-6 font-medium text-ink/80 text-base leading-relaxed">
+                        Campus Sprint is a 24-hour online hackathon created by CampusCrafters to foster student innovation. Teams build working technical projects solving practical challenges across four innovation tracks: FinTech, Social Good, Web3, and Beginner.
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-2 border-ink bg-white card-neo faq-item" data-category="about">
+                <button class="faq-accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl hover:bg-cream transition-colors" aria-expanded="false">
+                    <span>What is CampusCrafters?</span>
+                    <span class="text-cobalt icon-toggle font-black text-3xl leading-none ml-4">+</span>
+                </button>
+                <div class="faq-accordion-content">
+                    <div class="faq-accordion-inner px-6 pb-6 font-medium text-ink/80 text-base leading-relaxed">
+                        CampusCrafters is a student developer platform empowering college builders to create, connect, and lead. Your CampusCrafters account allows you to participate in hackathons, preserve your project portfolio, and connect with teammates and mentors year-round.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Eligibility & Registration -->
+            <div class="border-2 border-ink bg-white card-neo faq-item" data-category="eligibility">
+                <button class="faq-accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl hover:bg-cream transition-colors" aria-expanded="false">
+                    <span>Who is eligible to participate?</span>
+                    <span class="text-cobalt icon-toggle font-black text-3xl leading-none ml-4">+</span>
+                </button>
+                <div class="faq-accordion-content">
+                    <div class="faq-accordion-inner px-6 pb-6 font-medium text-ink/80 text-base leading-relaxed">
+                        Participation for this edition is open to currently enrolled students of [COLLEGE]. Students from all academic years (1st through 4th year and postgraduate) and all majors are eligible.
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-2 border-ink bg-white card-neo faq-item" data-category="eligibility">
+                <button class="faq-accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl hover:bg-cream transition-colors" aria-expanded="false">
+                    <span>Does registration cost anything?</span>
+                    <span class="text-cobalt icon-toggle font-black text-3xl leading-none ml-4">+</span>
+                </button>
+                <div class="faq-accordion-content">
+                    <div class="faq-accordion-inner px-6 pb-6 font-medium text-ink/80 text-base leading-relaxed">
+                        No! Campus Sprint is 100% free for all registered and verified students. You will never be asked for entry fees, ticket costs, or payment information.
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-2 border-ink bg-white card-neo faq-item" data-category="eligibility">
+                <button class="faq-accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl hover:bg-cream transition-colors" aria-expanded="false">
+                    <span>How does the registration process work?</span>
+                    <span class="text-cobalt icon-toggle font-black text-3xl leading-none ml-4">+</span>
+                </button>
+                <div class="faq-accordion-content">
+                    <div class="faq-accordion-inner px-6 pb-6 font-medium text-ink/80 text-base leading-relaxed">
+                        Sign in or create a simulated CampusCrafters account, then complete the 5-step registration stepper. You will confirm your student details, choose primary skills, pick a preferred track, and accept the online hackathon rules. On completion, you receive an official registration badge and ticket pass.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Teams & Collaboration -->
+            <div class="border-2 border-ink bg-white card-neo faq-item" data-category="teams">
+                <button class="faq-accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl hover:bg-cream transition-colors" aria-expanded="false">
+                    <span>What are the team size requirements?</span>
+                    <span class="text-cobalt icon-toggle font-black text-3xl leading-none ml-4">+</span>
+                </button>
+                <div class="faq-accordion-content">
+                    <div class="faq-accordion-inner px-6 pb-6 font-medium text-ink/80 text-base leading-relaxed">
+                        Every hackathon submission must come from a team of <strong>2 to 5 members</strong>. Solo submissions are not permitted to encourage team collaboration.
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-2 border-ink bg-white card-neo faq-item" data-category="teams">
+                <button class="faq-accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl hover:bg-cream transition-colors" aria-expanded="false">
+                    <span>Can I register without having a team yet?</span>
+                    <span class="text-cobalt icon-toggle font-black text-3xl leading-none ml-4">+</span>
+                </button>
+                <div class="faq-accordion-content">
+                    <div class="faq-accordion-inner px-6 pb-6 font-medium text-ink/80 text-base leading-relaxed">
+                        Yes! Individual participants can complete registration first. We have dedicated team-formation channels on our Discord where you can pitch ideas, list your skills, and form or join a team with a 6-character team join code before kickoff.
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-2 border-ink bg-white card-neo faq-item" data-category="teams">
+                <button class="faq-accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl hover:bg-cream transition-colors" aria-expanded="false">
+                    <span>Can team members be in different academic years?</span>
+                    <span class="text-cobalt icon-toggle font-black text-3xl leading-none ml-4">+</span>
+                </button>
+                <div class="faq-accordion-content">
+                    <div class="faq-accordion-inner px-6 pb-6 font-medium text-ink/80 text-base leading-relaxed">
+                        Yes! Multidisciplinary and mixed-year teams are actively encouraged. A first-year designer, a second-year frontend dev, and a fourth-year backend developer make a great combination.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Tracks & Problem Statements -->
+            <div class="border-2 border-ink bg-white card-neo faq-item" data-category="tracks">
+                <button class="faq-accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl hover:bg-cream transition-colors" aria-expanded="false">
+                    <span>What are the four official tracks?</span>
+                    <span class="text-cobalt icon-toggle font-black text-3xl leading-none ml-4">+</span>
+                </button>
+                <div class="faq-accordion-content">
+                    <div class="faq-accordion-inner px-6 pb-6 font-medium text-ink/80 text-base leading-relaxed">
+                        The four tracks are: <strong>FinTech</strong> (payments, budgeting, financial tools), <strong>Social Good</strong> (education, healthcare, environment, civic tech), <strong>Web3</strong> (decentralized apps, smart contracts, open web), and <strong>Beginner</strong> (first-time builders, mentored guidance). Visit the <a href="themes.html" class="font-bold underline text-cobalt">Themes page</a> for full details.
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-2 border-ink bg-white card-neo faq-item" data-category="tracks">
+                <button class="faq-accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl hover:bg-cream transition-colors" aria-expanded="false">
+                    <span>Where can I find problem statements?</span>
+                    <span class="text-cobalt icon-toggle font-black text-3xl leading-none ml-4">+</span>
+                </button>
+                <div class="faq-accordion-content">
+                    <div class="faq-accordion-inner px-6 pb-6 font-medium text-ink/80 text-base leading-relaxed">
+                        You can explore demonstration challenges right now on the <a href="problem-statements.html" class="font-bold underline text-cobalt">Problem Statements Directory</a>. Note that official competition problem statements unlock simultaneously for all teams at kickoff on Nov 15 at 10:00 AM IST.
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-2 border-ink bg-white card-neo faq-item" data-category="tracks">
+                <button class="faq-accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl hover:bg-cream transition-colors" aria-expanded="false">
+                    <span>Can our team switch tracks after registering?</span>
+                    <span class="text-cobalt icon-toggle font-black text-3xl leading-none ml-4">+</span>
+                </button>
+                <div class="faq-accordion-content">
+                    <div class="faq-accordion-inner px-6 pb-6 font-medium text-ink/80 text-base leading-relaxed">
+                        Yes. The track selected during individual registration is a preferred track to help with mentor allocation. Your team's official track is confirmed when you submit your final project repository before the 24-hour sprint deadline.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Online Participation -->
+            <div class="border-2 border-ink bg-white card-neo faq-item" data-category="online">
+                <button class="faq-accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl hover:bg-cream transition-colors" aria-expanded="false">
+                    <span>Is this hackathon fully online or in-person?</span>
+                    <span class="text-cobalt icon-toggle font-black text-3xl leading-none ml-4">+</span>
+                </button>
+                <div class="faq-accordion-content">
+                    <div class="faq-accordion-inner px-6 pb-6 font-medium text-ink/80 text-base leading-relaxed">
+                        Campus Sprint 2026 is a <strong>100% online hackathon</strong>. There is no physical venue attendance required. You and your teammates can collaborate from anywhere with your laptop, internet connection, and Discord.
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-2 border-ink bg-white card-neo faq-item" data-category="online">
+                <button class="faq-accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl hover:bg-cream transition-colors" aria-expanded="false">
+                    <span>What tools do I need for the online sprint?</span>
+                    <span class="text-cobalt icon-toggle font-black text-3xl leading-none ml-4">+</span>
+                </button>
+                <div class="faq-accordion-content">
+                    <div class="faq-accordion-inner px-6 pb-6 font-medium text-ink/80 text-base leading-relaxed">
+                        You will need:
+                        <ul class="list-disc ml-5 mt-2 space-y-1">
+                            <li>A laptop with code editor of your choice</li>
+                            <li>A GitHub account to host your project repository</li>
+                            <li>A Discord account to join mentor channels, announcements, and office hours</li>
+                            <li>Your CampusCrafters account for dashboard and submission portal access</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. Rules & Submissions -->
+            <div class="border-2 border-ink bg-white card-neo faq-item" data-category="rules">
+                <button class="faq-accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl hover:bg-cream transition-colors" aria-expanded="false">
+                    <span>Can we use pre-existing code or pre-built applications?</span>
+                    <span class="text-cobalt icon-toggle font-black text-3xl leading-none ml-4">+</span>
+                </button>
+                <div class="faq-accordion-content">
+                    <div class="faq-accordion-inner px-6 pb-6 font-medium text-ink/80 text-base leading-relaxed">
+                        No pre-built applications are allowed. All core project code must be written during the 24-hour sprint window. However, you are freely encouraged to use open-source libraries, UI frameworks, public APIs, starter templates (e.g. Create React App, Vite, Next.js), and cloud services.
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-2 border-ink bg-white card-neo faq-item" data-category="rules">
+                <button class="faq-accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl hover:bg-cream transition-colors" aria-expanded="false">
+                    <span>What must a final submission contain?</span>
+                    <span class="text-cobalt icon-toggle font-black text-3xl leading-none ml-4">+</span>
+                </button>
+                <div class="faq-accordion-content">
+                    <div class="faq-accordion-inner px-6 pb-6 font-medium text-ink/80 text-base leading-relaxed">
+                        A complete project submission must include:
+                        <ul class="list-disc ml-5 mt-2 space-y-1">
+                            <li>A public GitHub repository link with a clear README explaining setup and architecture</li>
+                            <li>A working deployed live demo link or PWA link</li>
+                            <li>A short recorded video walkthrough demo (max 3 minutes) demonstrating functionality</li>
+                            <li>Selected problem statement and chosen track</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. Judging & Results -->
+            <div class="border-2 border-ink bg-white card-neo faq-item" data-category="judging">
+                <button class="faq-accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl hover:bg-cream transition-colors" aria-expanded="false">
+                    <span>How are projects evaluated by the judges?</span>
+                    <span class="text-cobalt icon-toggle font-black text-3xl leading-none ml-4">+</span>
+                </button>
+                <div class="faq-accordion-content">
+                    <div class="faq-accordion-inner px-6 pb-6 font-medium text-ink/80 text-base leading-relaxed">
+                        Projects are evaluated on four key criteria:
+                        <ul class="list-disc ml-5 mt-2 space-y-1">
+                            <li><strong>Innovation &amp; Creativity:</strong> Originality of the approach and problem framing</li>
+                            <li><strong>Technical Execution:</strong> Code quality, working demo, and architectural soundess</li>
+                            <li><strong>Practical Impact:</strong> Potential real-world benefit to users or community</li>
+                            <li><strong>Presentation:</strong> Clarity of video demo, documentation, and user experience</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-2 border-ink bg-white card-neo faq-item" data-category="judging">
+                <button class="faq-accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl hover:bg-cream transition-colors" aria-expanded="false">
+                    <span>What are the prizes?</span>
+                    <span class="text-cobalt icon-toggle font-black text-3xl leading-none ml-4">+</span>
+                </button>
+                <div class="faq-accordion-content">
+                    <div class="faq-accordion-inner px-6 pb-6 font-medium text-ink/80 text-base leading-relaxed">
+                        The Grand Prize is a <strong>$5,000 Team Cash Prize</strong> plus fast-track entry into the CampusCrafters regional finals. Track winners receive <strong>$1,500 Cash</strong> each for FinTech and Social Good, and custom mechanical keyboards plus lifetime Pro accounts for the Best Beginner team.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8. Technical Support -->
+            <div class="border-2 border-ink bg-white card-neo faq-item" data-category="support">
+                <button class="faq-accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl hover:bg-cream transition-colors" aria-expanded="false">
+                    <span>How do I get help during the hackathon?</span>
+                    <span class="text-cobalt icon-toggle font-black text-3xl leading-none ml-4">+</span>
+                </button>
+                <div class="faq-accordion-content">
+                    <div class="faq-accordion-inner px-6 pb-6 font-medium text-ink/80 text-base leading-relaxed">
+                        During event day, our online help desk runs continuously on Discord. You can open a ticket in the #help-desk channel, drop into mentor voice rooms, or email us at <a href="mailto:support@campuscrafters.com" class="font-bold underline text-cobalt">support@campuscrafters.com</a>.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Empty search results -->
+        <div id="faq-empty-state" style="display:none;" class="text-center py-16 border-3 border-ink bg-white p-8 card-neo my-8">
+            <span class="text-4xl block mb-3">❓</span>
+            <h3 class="font-bricolage font-bold text-2xl text-ink mb-2">No matching questions found</h3>
+            <p class="text-sm font-medium text-ink/70 mb-4">We couldn't find any questions matching your query. Try a different keyword or reach out to our team.</p>
+            <button type="button" id="faq-empty-clear-btn" class="btn-neo bg-sun text-ink font-bricolage font-bold text-sm px-6 py-2.5 border-2 border-ink">
+                Clear Search
+            </button>
+        </div>
+
+        <!-- Contact Support Strip -->
+        <div class="border-3 border-ink bg-sun p-8 card-neo mt-12 text-center">
+            <h3 class="font-bricolage font-extrabold text-2xl text-ink mb-2">Still have a question?</h3>
+            <p class="text-sm font-medium text-ink/80 mb-6">Our student organizing team is here to help you get ready for event day.</p>
+            <a href="mailto:support@campuscrafters.com" class="btn-neo bg-white text-ink font-bricolage font-bold text-base px-8 py-3 border-2 border-ink inline-block">
+                Email support@campuscrafters.com
+            </a>
+        </div>
+    </main>
+
+    <!-- 5. Footer -->
+    <footer class="bg-ink text-cream py-12 px-6 border-t-2 border-ink">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-2">
+                <div class="w-6 h-6 bg-sun rounded-full flex items-center justify-center">
+                    <div class="w-2 h-2 bg-cobalt rounded-full"></div>
+                </div>
+                <span class="font-bricolage font-bold text-lg">Campus Sprint</span>
+                <span class="text-xs text-cream/60 ml-2">© 2026 CampusCrafters</span>
+            </div>
+            <div class="flex flex-wrap gap-6 text-sm font-bold">
+                <a href="campus_sprint_hackathon.html" class="hover:text-sun">Home</a>
+                <a href="themes.html" class="hover:text-sun">Themes</a>
+                <a href="problem-statements.html" class="hover:text-sun">Problem Statements</a>
+                <a href="faq.html" class="text-sun">FAQ</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- CampusSprint State & Data (Phase 3) -->
+    <script src="js/utils/storage.js"></script>
+    <script src="js/state/state-config.js"></script>
+    <script src="js/state/state-manager.js"></script>
+    <script src="js/data/tracks.js"></script>
+    <script src="js/data/problem-statements.js"></script>
+    <script src="js/data/announcements.js"></script>
+    <script src="js/data/participants.js"></script>
+    <script src="js/data/teams.js"></script>
+    <script src="js/data/submissions.js"></script>
+    <script src="js/data/index.js"></script>
+
+    <!-- CampusSprint Auth & Registration (Phase 4) -->
+    <script src="js/auth/auth-service.js"></script>
+    <script src="js/auth/auth-modal.js"></script>
+    <script src="js/registration/registration-service.js"></script>
+    <script src="js/registration/waitlist-modal.js"></script>
+    <script src="js/registration/registration-stepper.js"></script>
+
+    <!-- Phase 6: Teams & Dashboard Services -->
+    <script src="js/teams/team-service.js"></script>
+    <script src="js/dashboard/dashboard-service.js"></script>
+
+    <!-- Phase 7: Problem Selection & Project Submission Services -->
+    <script src="js/submissions/problem-selection-service.js"></script>
+    <script src="js/submissions/submission-service.js"></script>
+
+    <!-- Shared Navigation & Dispatcher -->
+    <script src="js/utils/nav.js"></script>
+
+    <!-- FAQ Accordion & Search Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const accordionList = document.getElementById('faq-accordion-list');
+            const items = Array.from(accordionList.querySelectorAll('.faq-item'));
+            const searchInput = document.getElementById('faq-search-input');
+            const clearSearchBtn = document.getElementById('faq-clear-search-btn');
+            const emptyState = document.getElementById('faq-empty-state');
+            const emptyClearBtn = document.getElementById('faq-empty-clear-btn');
+            const categoriesContainer = document.getElementById('faq-categories');
+            const expandAllBtn = document.getElementById('faq-expand-all-btn');
+            const collapseAllBtn = document.getElementById('faq-collapse-all-btn');
+
+            let activeCategory = 'all';
+
+            // Accordion toggle click
+            items.forEach(item => {
+                const btn = item.querySelector('.faq-accordion-btn');
+                const content = item.querySelector('.faq-accordion-content');
+                const icon = item.querySelector('.icon-toggle');
+
+                btn.addEventListener('click', () => {
+                    const isOpen = content.classList.contains('open');
+                    content.classList.toggle('open', !isOpen);
+                    if (icon) icon.classList.toggle('open', !isOpen);
+                    btn.setAttribute('aria-expanded', !isOpen ? 'true' : 'false');
+                });
+            });
+
+            // Expand all / Collapse all
+            expandAllBtn.addEventListener('click', () => {
+                items.forEach(item => {
+                    if (item.style.display !== 'none') {
+                        item.querySelector('.faq-accordion-content').classList.add('open');
+                        const icon = item.querySelector('.icon-toggle');
+                        if (icon) icon.classList.add('open');
+                        item.querySelector('.faq-accordion-btn').setAttribute('aria-expanded', 'true');
+                    }
+                });
+            });
+
+            collapseAllBtn.addEventListener('click', () => {
+                items.forEach(item => {
+                    item.querySelector('.faq-accordion-content').classList.remove('open');
+                    const icon = item.querySelector('.icon-toggle');
+                    if (icon) icon.classList.remove('open');
+                    item.querySelector('.faq-accordion-btn').setAttribute('aria-expanded', 'false');
+                });
+            });
+
+            // Category filter click
+            categoriesContainer.addEventListener('click', (e) => {
+                const chip = e.target.closest('.cat-chip');
+                if (!chip) return;
+                categoriesContainer.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                activeCategory = chip.dataset.category;
+                filterFaq();
+            });
+
+            // Search input
+            searchInput.addEventListener('input', () => {
+                clearSearchBtn.style.display = searchInput.value ? 'block' : 'none';
+                filterFaq();
+            });
+
+            function clearSearch() {
+                searchInput.value = '';
+                clearSearchBtn.style.display = 'none';
+                filterFaq();
+            }
+
+            clearSearchBtn.addEventListener('click', clearSearch);
+            emptyClearBtn.addEventListener('click', clearSearch);
+
+            function filterFaq() {
+                const query = searchInput.value.trim().toLowerCase();
+                let visibleCount = 0;
+
+                items.forEach(item => {
+                    const itemCat = item.dataset.category;
+                    const question = item.querySelector('.faq-accordion-btn span').textContent.toLowerCase();
+                    const answer = item.querySelector('.faq-accordion-inner').textContent.toLowerCase();
+
+                    const matchCategory = (activeCategory === 'all' || itemCat === activeCategory);
+                    const matchQuery = (!query || question.includes(query) || answer.includes(query));
+
+                    if (matchCategory && matchQuery) {
+                        item.style.display = 'block';
+                        visibleCount++;
+                        // If matching a specific search query, open answer automatically for convenience
+                        if (query) {
+                            item.querySelector('.faq-accordion-content').classList.add('open');
+                            const icon = item.querySelector('.icon-toggle');
+                            if (icon) icon.classList.add('open');
+                            item.querySelector('.faq-accordion-btn').setAttribute('aria-expanded', 'true');
+                        }
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+                accordionList.style.display = visibleCount === 0 ? 'none' : 'block';
+            }
+        });
+    </script>
+
+    <!-- Developer Switcher (dev only, ?dev=1) -->
+    <script src="js/dev/state-switcher.js"></script>
+</body>
+</html>
+

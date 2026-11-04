@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Participant Dashboard | Campus Sprint 2026</title>
+    <meta name="description" content="Manage your team workspace, digital hacker pass, profile, and announcements for Campus Sprint 2026 online hackathon.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FFF8EB',
+                        ink: '#111111',
+                        cobalt: '#2B50FF',
+                        sun: '#FFC83D',
+                        tomato: '#FF5A3C',
+                    },
+                    fontFamily: {
+                        bricolage: ['"Bricolage Grotesque"', 'sans-serif'],
+                        dmsans: ['"DM Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Neo-Brutalist CSS -->
+    <style>
+        body {
+            background-color: #FFF8EB;
+            color: #111111;
+        }
+        .btn-neo {
+            box-shadow: 4px 4px 0px #111111;
+            transition: all 0.15s ease-out;
+        }
+        .btn-neo:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #111111;
+        }
+        .btn-neo:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px #111111;
+        }
+        .card-neo {
+            box-shadow: 6px 6px 0px #111111;
+            transition: all 0.25s ease;
+        }
+        .ticket-neo {
+            position: relative;
+            background: #FFFFFF;
+            border: 3px solid #111111;
+            box-shadow: 6px 6px 0px #111111;
+        }
+        .ticket-neo::before, .ticket-neo::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 22px;
+            height: 22px;
+            background: #FFF8EB;
+            border: 3px solid #111111;
+            border-radius: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+        .ticket-neo::before {
+            left: -14px;
+        }
+        .ticket-neo::after {
+            right: -14px;
+        }
+        .mobile-drawer { position: fixed; inset: 0; z-index: 100; pointer-events: none; }
+        .mobile-drawer.open { pointer-events: auto; }
+        .drawer-backdrop { position: absolute; inset: 0; background: rgba(17,17,17,0.5); opacity: 0; transition: opacity 0.25s ease; }
+        .mobile-drawer.open .drawer-backdrop { opacity: 1; }
+        .drawer-panel { position: absolute; right: 0; top: 0; bottom: 0; width: min(320px, 85vw); background: #FFF8EB; border-left: 4px solid #111111; box-shadow: -6px 0 0 #111111; transform: translateX(100%); transition: transform 0.25s cubic-bezier(0.22,1,0.36,1); display: flex; flex-direction: column; padding: 1.5rem; gap: 0.5rem; overflow-y: auto; }
+        .mobile-drawer.open .drawer-panel { transform: translateX(0); }
+
+        @media (prefers-reduced-motion: reduce) {
+            .btn-neo:hover, .btn-neo:active { transform: none; }
+            .card-neo { transition: none; }
+        }
+    </style>
+</head>
+<body class="font-dmsans antialiased min-h-screen flex flex-col">
+
+    <!-- 1. Sticky Navigation -->
+    <nav class="sticky top-0 z-40 bg-cream border-b-2 border-ink px-4 sm:px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- Logo -->
+            <a href="campus_sprint_hackathon.html" class="font-bricolage font-bold text-2xl tracking-tight flex items-center gap-2">
+                <div class="w-8 h-8 bg-sun border-2 border-ink rounded-full flex items-center justify-center">
+                    <div class="w-3 h-3 bg-cobalt rounded-full"></div>
+                </div>
+                Campus Sprint
+            </a>
+            
+            <!-- Desktop Links -->
+            <div class="hidden lg:flex gap-6 font-bold font-bricolage text-base">
+                <a href="campus_sprint_hackathon.html" class="hover:text-cobalt transition-colors">Home</a>
+                <a href="themes.html" class="hover:text-cobalt transition-colors">Themes</a>
+                <a href="problem-statements.html" class="hover:text-cobalt transition-colors">Problems</a>
+                <a href="campus_sprint_hackathon.html#schedule" class="hover:text-cobalt transition-colors">Schedule</a>
+                <a href="faq.html" class="hover:text-cobalt transition-colors">FAQ</a>
+                <a href="dashboard.html" class="nav-dashboard-link text-cobalt underline decoration-2 underline-offset-4" style="display:none;">Dashboard</a>
+            </div>
+
+            <!-- Actions / Status Area -->
+            <div class="hidden sm:flex items-center gap-3" id="nav-actions-container">
+                <button id="nav-login-btn" class="font-bricolage font-bold text-base text-ink hover:text-cobalt transition-colors px-2 py-1">Sign In</button>
+                <button id="nav-cta-btn" class="btn-neo bg-cobalt text-cream font-bricolage font-bold text-base px-5 py-1.5 border-2 border-ink">Register</button>
+                <button id="nav-logout-btn" style="display:none;" class="text-xs font-bold text-ink underline hover:text-tomato ml-2">Log Out</button>
+            </div>
+            
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="sm:hidden block p-2" aria-expanded="false" aria-label="Open navigation menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-ink">
+                    <path d="M3 12h18M3 6h18M3 18h18"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-drawer" class="mobile-drawer">
+        <div class="drawer-backdrop"></div>
+        <div class="drawer-panel">
+            <div class="flex justify-between items-center mb-4">
+                <span class="font-bricolage font-bold text-xl">Menu</span>
+                <button id="drawer-close-btn" aria-label="Close navigation menu" class="p-2 border-2 border-ink bg-cream hover:bg-sun transition-colors">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <a href="campus_sprint_hackathon.html" class="font-bricolage font-bold text-lg py-2 border-b-2 border-ink/20 hover:text-cobalt transition-colors">Home</a>
+            <a href="themes.html" class="font-bricolage font-bold text-lg py-2 border-b-2 border-ink/20 hover:text-cobalt transition-colors">Themes</a>
+            <a href="problem-statements.html" class="font-bricolage font-bold text-lg py-2 border-b-2 border-ink/20 hover:text-cobalt transition-colors">Problems</a>
+            <a href="campus_sprint_hackathon.html#schedule" class="font-bricolage font-bold text-lg py-2 border-b-2 border-ink/20 hover:text-cobalt transition-colors">Schedule</a>
+            <a href="faq.html" class="font-bricolage font-bold text-lg py-2 border-b-2 border-ink/20 hover:text-cobalt transition-colors">FAQ</a>
+            <a href="dashboard.html" class="nav-dashboard-link font-bricolage font-bold text-lg py-2 border-b-2 border-ink/20 text-cobalt underline" style="display:none;">Dashboard</a>
+
+            <div class="mt-auto pt-6 flex flex-col gap-3">
+                <button id="drawer-login-btn" class="w-full text-center font-bricolage font-bold text-lg py-2.5 border-2 border-ink bg-white hover:bg-sun transition-colors">Sign In</button>
+                <button id="drawer-cta-btn" class="btn-neo w-full text-center bg-cobalt text-cream font-bricolage font-bold text-lg py-2.5 border-2 border-ink">Register</button>
+                <button id="drawer-logout-btn" style="display:none;" class="text-xs font-bold text-ink underline hover:text-tomato text-center pt-2">Log Out</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN BODY CONTAINER -->
+    <main class="flex-1 flex flex-col">
+
+        <!-- AUTH GUARD: LOGGED OUT -->
+        <section id="dash-guard-logged-out" class="hidden max-w-2xl mx-auto my-12 px-4 w-full">
+            <div class="p-8 md:p-12 border-4 border-ink bg-white card-neo text-center">
+                <div class="w-16 h-16 bg-sun border-3 border-ink rounded-full mx-auto flex items-center justify-center text-2xl mb-4 shadow-[4px_4px_0_#111111]">
+                    🔒
+                </div>
+                <h1 class="font-bricolage font-extrabold text-3xl md:text-4xl text-ink mb-3">Participant Sign-In Required</h1>
+                <p class="text-base text-ink/80 mb-6 max-w-lg mx-auto">
+                    The Participant Dashboard is reserved for registered hackers. Sign in with your CampusCrafters account or create one to manage your team, access your Digital Pass, and collaborate online.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button id="guard-signin-btn" class="btn-neo bg-cobalt text-cream font-bricolage font-bold text-lg px-8 py-3 border-2 border-ink">
+                        Sign In to Account
+                    </button>
+                    <button id="guard-signup-btn" class="btn-neo bg-sun text-ink font-bricolage font-bold text-lg px-8 py-3 border-2 border-ink">
+                        Create Account
+                    </button>
+                </div>
+                <p class="text-xs font-bold text-ink/60 mt-6">
+                    Quick demo credentials available in the sign-in modal for evaluation.
+                </p>
+            </div>
+        </section>
+
+        <!-- AUTH GUARD: LOGGED IN BUT UNREGISTERED -->
+        <section id="dash-guard-unregistered" class="hidden max-w-2xl mx-auto my-12 px-4 w-full">
+            <div class="p-8 md:p-12 border-4 border-ink bg-white card-neo text-center">
+                <div class="w-16 h-16 bg-tomato text-white border-3 border-ink rounded-full mx-auto flex items-center justify-center text-2xl mb-4 shadow-[4px_4px_0_#111111]">
+                    ⚠️
+                </div>
+                <h1 class="font-bricolage font-extrabold text-3xl md:text-4xl text-ink mb-2">Registration Incomplete</h1>
+                <p class="text-sm font-bold text-cobalt uppercase tracking-wider mb-4">
+                    Signed in as <span id="unregistered-user-name">Hacker</span>
+                </p>
+                <p class="text-base text-ink/80 mb-6 max-w-lg mx-auto">
+                    You have an active CampusCrafters account, but you haven't completed your event registration for Campus Sprint 2026. Complete the quick 3-step registration form to claim your Digital Pass and unlock your team workspace.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button id="guard-complete-reg-btn" class="btn-neo bg-cobalt text-cream font-bricolage font-bold text-lg px-8 py-3 border-2 border-ink">
+                        Complete Registration Now 🎟️
+                    </button>
+                    <a href="campus_sprint_hackathon.html" class="btn-neo bg-cream text-ink font-bricolage font-bold text-lg px-6 py-3 border-2 border-ink">
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- FULL PARTICIPANT DASHBOARD WORKSPACE (VISIBLE WHEN REGISTERED) -->
+        <div id="dash-main-workspace" class="flex-1 flex flex-col md:flex-row border-t-2 border-ink">
+
+            <!-- SIDEBAR (DESKTOP) & TOP BAR (MOBILE) -->
+            <aside class="w-full md:w-64 lg:w-72 bg-cream border-b-2 md:border-b-0 md:border-r-4 border-ink flex flex-col shrink-0">
+                <!-- User Quick Info -->
+                <div class="p-5 border-b-2 border-ink bg-white/70">
+                    <div class="flex items-center gap-3">
+                        <div id="profile-avatar-circle" class="w-12 h-12 border-2 border-ink font-bricolage font-bold text-lg text-cream flex items-center justify-center shadow-[3px_3px_0_#111111] bg-cobalt">
+                            AM
+                        </div>
+                        <div class="overflow-hidden">
+                            <h3 id="overview-user-name" class="font-bricolage font-bold text-lg text-ink truncate leading-tight">Arjun Mehta</h3>
+                            <div class="flex items-center gap-1.5 mt-0.5">
+                                <span class="w-2 h-2 rounded-full bg-green-500 border border-ink"></span>
+                                <span class="text-xs font-bold text-ink/70">Online Hacker</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs List -->
+                <nav class="p-3 md:p-4 flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-visible">
+                    <button type="button" class="dash-tab-btn flex-1 md:flex-initial text-left px-4 py-2.5 font-bricolage font-bold text-base border-2 border-ink bg-cobalt text-cream flex items-center gap-2.5 transition-colors whitespace-nowrap" data-tab="overview">
+                        <span class="text-lg">📊</span> Overview
+                    </button>
+                    <button type="button" class="dash-tab-btn flex-1 md:flex-initial text-left px-4 py-2.5 font-bricolage font-bold text-base border-2 border-ink bg-cream text-ink hover:bg-sun/40 flex items-center gap-2.5 transition-colors whitespace-nowrap" data-tab="profile">
+                        <span class="text-lg">👤</span> My Profile
+                    </button>
+                    <button type="button" class="dash-tab-btn flex-1 md:flex-initial text-left px-4 py-2.5 font-bricolage font-bold text-base border-2 border-ink bg-cream text-ink hover:bg-sun/40 flex items-center gap-2.5 transition-colors whitespace-nowrap" data-tab="team">
+                        <span class="text-lg">👥</span> My Team
+                    </button>
+                    <button type="button" class="dash-tab-btn flex-1 md:flex-initial text-left px-4 py-2.5 font-bricolage font-bold text-base border-2 border-ink bg-cream text-ink hover:bg-sun/40 flex items-center gap-2.5 transition-colors whitespace-nowrap" data-tab="problem-selection">
+                        <span class="text-lg">🎯</span> Problem Selection
+                    </button>
+                    <button type="button" class="dash-tab-btn flex-1 md:flex-initial text-left px-4 py-2.5 font-bricolage font-bold text-base border-2 border-ink bg-cream text-ink hover:bg-sun/40 flex items-center gap-2.5 transition-colors whitespace-nowrap" data-tab="project-submission">
+                        <span class="text-lg">🚀</span> Project Submission
+                    </button>
+                    <button type="button" class="dash-tab-btn flex-1 md:flex-initial text-left px-4 py-2.5 font-bricolage font-bold text-base border-2 border-ink bg-cream text-ink hover:bg-sun/40 flex items-center justify-between transition-colors whitespace-nowrap" data-tab="announcements">
+                        <span class="flex items-center gap-2.5"><span class="text-lg">📢</span> Announcements</span>
+                        <span id="announcements-unread-badge" style="display:none;" class="text-[10px] font-black uppercase px-1.5 py-0.5 bg-tomato text-white border border-ink">0</span>
+                    </button>
+                    <button type="button" class="dash-tab-btn flex-1 md:flex-initial text-left px-4 py-2.5 font-bricolage font-bold text-base border-2 border-ink bg-cream text-ink hover:bg-sun/40 flex items-center gap-2.5 transition-colors whitespace-nowrap" data-tab="event-info">
+                        <span class="text-lg">ℹ️</span> Event Info
+                    </button>
+                </nav>
+
+                <!-- Sidebar Footer Links -->
+                <div class="mt-auto hidden md:block p-4 border-t-2 border-ink bg-white/40 text-xs">
+                    <p class="font-bold text-ink/70 mb-1">24-Hour Online Hackathon</p>
+                    <p class="opacity-70 mb-3">All activities occur virtually via Discord and GitHub.</p>
+                    <a href="https://discord.gg/campuscrafters" target="_blank" rel="noopener noreferrer" class="btn-neo inline-flex items-center gap-2 w-full justify-center py-2 px-3 bg-sun font-bricolage font-bold border-2 border-ink">
+                        <span>💬</span> Join Event Discord
+                    </a>
+                </div>
+            </aside>
+
+            <!-- MAIN TAB CONTENT PANES -->
+            <section class="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto">
+
+                <!-- 1. TAB PANE: OVERVIEW -->
+                <div id="tab-pane-overview" class="dash-tab-pane space-y-6">
+                    <!-- Top Welcome & Status Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                        <!-- Card 1: Registration Status -->
+                        <div class="p-5 border-3 border-ink bg-white card-neo flex flex-col justify-between">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-cobalt">Registration Confirmed</span>
+                                <h4 class="font-bricolage font-bold text-2xl text-ink mt-1" id="overview-reg-id">REG-2026-DEMO</h4>
+                                <p class="text-xs text-ink/70 mt-1">Official Participant ID</p>
+                            </div>
+                            <div class="mt-4 pt-3 border-t-2 border-ink/10 flex items-center justify-between">
+                                <span class="text-xs font-bold px-2 py-0.5 bg-sun border border-ink" id="overview-track-badge">FinTech</span>
+                                <span class="text-xs font-bold text-green-700">✓ Active Pass</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Event Phase Status -->
+                        <div class="p-5 border-3 border-ink bg-white card-neo flex flex-col justify-between">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-ink/60">Event Status</span>
+                                <h4 class="font-bricolage font-bold text-2xl text-ink mt-1" id="overview-event-state">Registration Open</h4>
+                                <p class="text-xs text-ink/70 mt-1">Countdown active • Kickoff at 10:00 AM IST</p>
+                            </div>
+                            <div class="mt-4 pt-3 border-t-2 border-ink/10">
+                                <a href="campus_sprint_hackathon.html#schedule" class="text-xs font-bold text-cobalt underline hover:text-tomato">View 24-hr Timeline →</a>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: Team Status -->
+                        <div class="p-5 border-3 border-ink bg-white card-neo flex flex-col justify-between">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-ink/60">My Team Workspace</span>
+                                <h4 class="font-bricolage font-bold text-2xl text-ink mt-1 truncate" id="overview-team-status">CodeCatalysts</h4>
+                                <p class="text-xs text-ink/70 mt-1" id="overview-team-subtext">3 of 5 members • Leader</p>
+                            </div>
+                            <div class="mt-4 pt-3 border-t-2 border-ink/10 flex items-center justify-between">
+                                <button type="button" id="quick-manage-team-btn" class="text-xs font-bold text-cobalt underline hover:text-tomato">Manage Team Roster →</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Middle Row: Digital Hacker Pass Banner -->
+                    <div class="ticket-neo p-6 md:p-8 flex flex-col lg:flex-row items-center justify-between gap-6">
+                        <div class="space-y-3 flex-1">
+                            <div class="inline-flex items-center gap-2 px-2.5 py-1 bg-sun border-2 border-ink text-xs font-bold uppercase tracking-wider">
+                                🎟️ Official Online Hacker Pass
+                            </div>
+                            <h3 class="font-bricolage font-extrabold text-2xl md:text-3xl text-ink">
+                                Ready for the 24-Hour Online Sprint
+                            </h3>
+                            <p class="text-sm text-ink/80 max-w-xl">
+                                Your digital hacker credential for Campus Sprint 2026. Use your ticket code for official Discord role verification, workshop access, and final project submissions.
+                            </p>
+                            <div class="flex flex-wrap items-center gap-4 text-xs font-bold pt-1">
+                                <div><span class="opacity-60">Hacker:</span> <span id="overview-ticket-name" class="font-bold">Arjun Mehta</span></div>
+                                <div><span class="opacity-60">Track:</span> <span id="overview-ticket-track" class="font-bold">FinTech</span></div>
+                                <div><span class="opacity-60">Code:</span> <span id="overview-ticket-code" class="font-mono bg-cream px-2 py-0.5 border border-ink">CS26-4F7K-9R2M</span></div>
+                            </div>
+                        </div>
+                        <div class="shrink-0 flex flex-col items-center gap-3">
+                            <button type="button" id="open-ticket-pass-btn" class="btn-neo bg-cobalt text-cream font-bricolage font-bold text-base px-6 py-3 border-2 border-ink flex items-center gap-2">
+                                <span>🔍</span> View Full Pass Card
+                            </button>
+                            <span class="text-[11px] font-bold opacity-60">Includes verification QR code</span>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Grid: Quick Actions & Recent Announcements -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Quick Actions Grid -->
+                        <div class="p-6 border-3 border-ink bg-white card-neo">
+                            <h4 class="font-bricolage font-bold text-xl text-ink mb-4 flex items-center gap-2">
+                                <span>⚡</span> Quick Actions
+                            </h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <a href="problem-statements.html" class="p-3 border-2 border-ink bg-cream hover:bg-sun transition-colors flex items-center gap-3 font-bricolage font-bold text-sm">
+                                    <span class="text-xl">💡</span> Browse Problem Statements
+                                </a>
+                                <a href="themes.html" class="p-3 border-2 border-ink bg-cream hover:bg-sun transition-colors flex items-center gap-3 font-bricolage font-bold text-sm">
+                                    <span class="text-xl">🎯</span> Explore Track Themes
+                                </a>
+                                <a href="https://discord.gg/campuscrafters" target="_blank" rel="noopener noreferrer" class="p-3 border-2 border-ink bg-cream hover:bg-sun transition-colors flex items-center gap-3 font-bricolage font-bold text-sm">
+                                    <span class="text-xl">💬</span> Join Discord Help Desk
+                                </a>
+                                <a href="faq.html" class="p-3 border-2 border-ink bg-cream hover:bg-sun transition-colors flex items-center gap-3 font-bricolage font-bold text-sm">
+                                    <span class="text-xl">❓</span> Read Hackathon FAQ
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Recent Announcements Widget -->
+                        <div class="p-6 border-3 border-ink bg-white card-neo flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-4">
+                                    <h4 class="font-bricolage font-bold text-xl text-ink flex items-center gap-2">
+                                        <span>📢</span> Latest Announcements
+                                    </h4>
+                                    <button type="button" id="quick-view-all-ann-btn" class="text-xs font-bold text-cobalt underline hover:text-tomato">
+                                        View All →
+                                    </button>
+                                </div>
+                                <div id="overview-announcements-widget" class="space-y-3">
+                                    <!-- Populated by JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. TAB PANE: MY PROFILE -->
+                <div id="tab-pane-profile" class="dash-tab-pane hidden space-y-6">
+                    <div class="p-6 md:p-8 border-3 border-ink bg-white card-neo">
+                        <div class="flex justify-between items-center border-b-2 border-ink/20 pb-4 mb-6">
+                            <div>
+                                <h3 class="font-bricolage font-extrabold text-2xl md:text-3xl text-ink">My Participant Profile</h3>
+                                <p class="text-sm text-ink/70">Update your details, bio, and technical skills visible to teammates.</p>
+                            </div>
+                            <span id="profile-save-status" class="text-xs font-bold"></span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Left: Editable Personal Info -->
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="profile-name-input" class="block text-xs font-bold uppercase tracking-wider mb-1 text-ink">Full Name</label>
+                                    <input type="text" id="profile-name-input" class="w-full px-3.5 py-2.5 border-2 border-ink font-bold bg-cream focus:bg-white outline-none">
+                                </div>
+
+                                <div>
+                                    <label for="profile-bio-input" class="block text-xs font-bold uppercase tracking-wider mb-1 text-ink">Bio / About Me</label>
+                                    <textarea id="profile-bio-input" rows="3" class="w-full px-3.5 py-2.5 border-2 border-ink text-sm bg-cream focus:bg-white outline-none" placeholder="Short bio describing your background, interests, or hackathon goals."></textarea>
+                                </div>
+
+                                <div>
+                                    <label for="profile-college-input" class="block text-xs font-bold uppercase tracking-wider mb-1 text-ink">College / University</label>
+                                    <input type="text" id="profile-college-input" class="w-full px-3.5 py-2.5 border-2 border-ink text-sm bg-cream focus:bg-white outline-none">
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label for="profile-course-input" class="block text-xs font-bold uppercase tracking-wider mb-1 text-ink">Degree / Course</label>
+                                        <input type="text" id="profile-course-input" class="w-full px-3.5 py-2.5 border-2 border-ink text-sm bg-cream focus:bg-white outline-none">
+                                    </div>
+                                    <div>
+                                        <label for="profile-year-input" class="block text-xs font-bold uppercase tracking-wider mb-1 text-ink">Year of Study</label>
+                                        <input type="text" id="profile-year-input" class="w-full px-3.5 py-2.5 border-2 border-ink text-sm bg-cream focus:bg-white outline-none">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right: Skills Tag Editor & Read-Only Registration Info -->
+                            <div class="space-y-5">
+                                <!-- Skills Tag Manager -->
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider mb-1 text-ink">Technical Skills & Expertise</label>
+                                    <div id="profile-skills-tags-container" class="p-3 border-2 border-ink bg-white/80 min-h-[50px] flex flex-wrap gap-2 mb-2">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <input type="text" id="profile-skill-input" placeholder="Type a skill (e.g. Next.js, Rust)..." class="flex-1 px-3 py-1.5 border-2 border-ink text-xs bg-cream outline-none">
+                                        <button type="button" id="profile-add-skill-btn" class="btn-neo px-4 py-1.5 border-2 border-ink bg-sun text-xs font-bold">Add</button>
+                                    </div>
+                                    <div class="mt-2 flex flex-wrap gap-1.5 items-center">
+                                        <span class="text-[11px] font-bold opacity-60">Suggestions:</span>
+                                        <button type="button" class="skill-suggestion-chip text-[11px] font-bold px-2 py-0.5 border border-ink bg-cream hover:bg-sun" data-skill="React">React</button>
+                                        <button type="button" class="skill-suggestion-chip text-[11px] font-bold px-2 py-0.5 border border-ink bg-cream hover:bg-sun" data-skill="Node.js">Node.js</button>
+                                        <button type="button" class="skill-suggestion-chip text-[11px] font-bold px-2 py-0.5 border border-ink bg-cream hover:bg-sun" data-skill="Python">Python</button>
+                                        <button type="button" class="skill-suggestion-chip text-[11px] font-bold px-2 py-0.5 border border-ink bg-cream hover:bg-sun" data-skill="Figma">Figma</button>
+                                        <button type="button" class="skill-suggestion-chip text-[11px] font-bold px-2 py-0.5 border border-ink bg-cream hover:bg-sun" data-skill="Smart Contracts">Smart Contracts</button>
+                                        <button type="button" class="skill-suggestion-chip text-[11px] font-bold px-2 py-0.5 border border-ink bg-cream hover:bg-sun" data-skill="Flutter">Flutter</button>
+                                    </div>
+                                </div>
+
+                                <!-- Read-Only Event Credentials -->
+                                <div class="p-4 border-2 border-ink bg-cream/70 space-y-2">
+                                    <h5 class="text-xs font-bold uppercase tracking-wider text-ink border-b border-ink/20 pb-1 mb-2">Locked Event Credentials</h5>
+                                    <div class="flex justify-between text-xs">
+                                        <span class="opacity-70">Account Email:</span>
+                                        <span id="profile-email-ro" class="font-bold">arjun.m@student.example.edu</span>
+                                    </div>
+                                    <div class="flex justify-between text-xs">
+                                        <span class="opacity-70">Registered Track:</span>
+                                        <span id="profile-track-ro" class="font-bold text-cobalt">FinTech & Inclusion</span>
+                                    </div>
+                                    <div class="flex justify-between text-xs">
+                                        <span class="opacity-70">Registration ID:</span>
+                                        <span id="profile-regid-ro" class="font-mono font-bold">REG-2026-DEMO</span>
+                                    </div>
+                                    <div class="flex justify-between text-xs">
+                                        <span class="opacity-70">Ticket Code:</span>
+                                        <span id="profile-ticket-ro" class="font-mono font-bold">CS26-PASS-DEMO</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Save Button Bar -->
+                        <div class="mt-8 pt-4 border-t-2 border-ink flex justify-end">
+                            <button type="button" id="profile-save-btn" class="btn-neo bg-cobalt text-cream font-bricolage font-bold text-base px-8 py-2.5 border-2 border-ink">
+                                Save Profile Changes ✓
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. TAB PANE: MY TEAM -->
+                <div id="tab-pane-team" class="dash-tab-pane hidden space-y-6">
+
+                    <!-- STATE A: NO TEAM PANE -->
+                    <div id="team-no-team-pane" class="hidden space-y-6">
+                        <div class="p-6 md:p-8 border-3 border-ink bg-white card-neo text-center max-w-2xl mx-auto">
+                            <div class="w-16 h-16 bg-sun border-3 border-ink rounded-full mx-auto flex items-center justify-center text-3xl mb-3 shadow-[3px_3px_0_#111111]">
+                                👥
+                            </div>
+                            <h3 class="font-bricolage font-extrabold text-2xl md:text-3xl text-ink mb-2">No Team Joined Yet</h3>
+                            <p class="text-sm text-ink/80 mb-6 max-w-lg mx-auto">
+                                Hackathon rules require teams of <strong>2 to 5 members</strong>. Form a team with your friends or join an existing team using their unique invite code.
+                            </p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                                <!-- Option 1: Create Team -->
+                                <div class="p-5 border-2 border-ink bg-cream/50 flex flex-col justify-between">
+                                    <div>
+                                        <h4 class="font-bricolage font-bold text-lg text-ink mb-1">Option 1: Create a Team</h4>
+                                        <p class="text-xs text-ink/70 mb-4">You will be the team leader and receive an invite code to share with teammates.</p>
+                                        <form id="team-create-form" class="space-y-3">
+                                            <div>
+                                                <label for="team-create-name" class="block text-xs font-bold uppercase tracking-wider mb-1">Team Name</label>
+                                                <input type="text" id="team-create-name" required placeholder="e.g. CodeCatalysts" class="w-full px-3 py-2 border-2 border-ink text-sm bg-white outline-none">
+                                            </div>
+                                            <div>
+                                                <label for="team-create-track" class="block text-xs font-bold uppercase tracking-wider mb-1">Hackathon Track</label>
+                                                <select id="team-create-track" class="w-full px-3 py-2 border-2 border-ink text-sm bg-white outline-none">
+                                                    <option value="fintech">FinTech &amp; Financial Inclusion</option>
+                                                    <option value="social-good">Social Good &amp; Civic Tech</option>
+                                                    <option value="web3">Web3 &amp; Decentralized Apps</option>
+                                                    <option value="beginner">Beginner Friendly Track</option>
+                                                </select>
+                                            </div>
+                                            <p id="team-create-error" class="hidden text-xs font-bold text-tomato"></p>
+                                            <button type="submit" class="btn-neo w-full bg-cobalt text-cream font-bricolage font-bold text-sm py-2 border-2 border-ink mt-2">
+                                                Create Team 🚀
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <!-- Option 2: Join Team -->
+                                <div class="p-5 border-2 border-ink bg-cream/50 flex flex-col justify-between">
+                                    <div>
+                                        <h4 class="font-bricolage font-bold text-lg text-ink mb-1">Option 2: Join with Code</h4>
+                                        <p class="text-xs text-ink/70 mb-4">Enter the 7-character invite code shared by your team leader (e.g. CC-4F7K).</p>
+                                        <form id="team-join-form" class="space-y-3">
+                                            <div>
+                                                <label for="team-join-code-input" class="block text-xs font-bold uppercase tracking-wider mb-1">Team Join Code</label>
+                                                <input type="text" id="team-join-code-input" required placeholder="e.g. CS-4K9M" class="w-full px-3 py-2 border-2 border-ink font-mono font-bold text-sm bg-white uppercase outline-none">
+                                            </div>
+                                            <p id="team-join-error" class="hidden text-xs font-bold text-tomato"></p>
+                                            <button type="submit" class="btn-neo w-full bg-sun text-ink font-bricolage font-bold text-sm py-2 border-2 border-ink mt-2">
+                                                Join Team 🤝
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p class="text-xs font-bold text-ink/60 mt-6">
+                                Looking for teammates? Post your skills in the <a href="https://discord.gg/campuscrafters" target="_blank" rel="noopener noreferrer" class="text-cobalt underline">#team-formation</a> channel on Discord.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- STATE B: HAS TEAM PANE -->
+                    <div id="team-has-team-pane" class="space-y-6">
+                        <!-- Team Workspace Header Card -->
+                        <div class="p-6 md:p-8 border-3 border-ink bg-white card-neo flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                            <div>
+                                <div class="flex items-center gap-2 mb-2 flex-wrap">
+                                    <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 bg-sun border border-ink" id="team-track-badge">FinTech</span>
+                                    <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 bg-cream border border-ink" id="team-member-count-badge">3 / 5 Members</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <h3 class="font-bricolage font-extrabold text-3xl md:text-4xl text-ink" id="team-display-name">CodeCatalysts</h3>
+                                    <button type="button" id="team-rename-btn" class="text-xs font-bold text-cobalt underline hover:text-tomato">Rename</button>
+                                </div>
+                                <p class="text-xs text-ink/70 mt-1">Official Team Workspace for Campus Sprint 2026.</p>
+                            </div>
+
+                            <!-- Join Code & Share Box -->
+                            <div class="p-4 border-2 border-ink bg-cream/70 w-full md:w-auto flex flex-col sm:flex-row items-center gap-3">
+                                <div class="text-center sm:text-left">
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-ink/60 block">Invite Code</span>
+                                    <span class="font-mono font-bold text-xl tracking-wider text-ink" id="team-join-code-display">CC-4F7K</span>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button type="button" id="team-copy-code-btn" class="btn-neo px-3 py-1.5 bg-white border-2 border-ink text-xs font-bold">
+                                        Copy Code
+                                    </button>
+                                    <button type="button" id="team-regen-code-btn" class="btn-neo px-3 py-1.5 bg-sun border-2 border-ink text-xs font-bold">
+                                        Regenerate
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Team Roster Section -->
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="font-bricolage font-bold text-xl text-ink">Team Members</h4>
+                                <span class="text-xs font-bold opacity-70">Capacity: 2–5 hackers per team</span>
+                            </div>
+
+                            <div id="team-roster-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                                <!-- Populated dynamically by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Team Actions Footer Bar -->
+                        <div class="p-4 border-2 border-ink bg-white/60 flex flex-wrap justify-between items-center gap-4">
+                            <div class="flex items-center gap-3">
+                                <a href="https://discord.gg/campuscrafters" target="_blank" rel="noopener noreferrer" class="btn-neo px-4 py-2 border-2 border-ink bg-sun font-bricolage font-bold text-xs">
+                                    💬 Open Team Discord Channel
+                                </a>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <button type="button" id="team-leave-btn" class="btn-neo px-4 py-2 border-2 border-ink bg-cream hover:bg-tomato hover:text-white font-bricolage font-bold text-xs">
+                                    Leave Team
+                                </button>
+                                <button type="button" id="team-disband-btn" class="btn-neo px-4 py-2 border-2 border-ink bg-tomato text-white font-bricolage font-bold text-xs">
+                                    Disband Team
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. TAB PANE: PROBLEM SELECTION -->
+                <div id="tab-pane-problem-selection" class="dash-tab-pane hidden space-y-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b-2 border-ink pb-4">
+                        <div>
+                            <h3 class="font-bricolage font-extrabold text-2xl md:text-3xl text-ink">Problem Statement Selection</h3>
+                            <p class="text-sm text-ink/70">Select the official challenge problem your team will build during the 24-hour sprint.</p>
+                        </div>
+                        <div id="ps-selection-role-pill" class="text-xs font-bold px-3 py-1 bg-cream border-2 border-ink">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Active Selected Statement Card (or Empty State) -->
+                    <div id="ps-active-selection-container">
+                        <!-- Rendered by JS -->
+                    </div>
+
+                    <!-- Available Problem Statements Directory -->
+                    <div class="pt-4 border-t-2 border-ink/20">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+                            <div>
+                                <h4 class="font-bricolage font-bold text-xl text-ink">Available Challenge Statements</h4>
+                                <p class="text-xs text-ink/70">Browse the official demonstration problem statements across all 4 innovation tracks.</p>
+                            </div>
+                            <!-- Track Filters -->
+                            <div class="flex flex-wrap gap-1.5" id="ps-dash-track-filters">
+                                <button type="button" class="ps-dash-filter-btn px-2.5 py-1 border-2 border-ink text-xs font-bold bg-cobalt text-cream" data-track="all">All Tracks</button>
+                                <button type="button" class="ps-dash-filter-btn px-2.5 py-1 border-2 border-ink text-xs font-bold bg-cream text-ink hover:bg-sun" data-track="fintech">FinTech</button>
+                                <button type="button" class="ps-dash-filter-btn px-2.5 py-1 border-2 border-ink text-xs font-bold bg-cream text-ink hover:bg-sun" data-track="social-good">Social Good</button>
+                                <button type="button" class="ps-dash-filter-btn px-2.5 py-1 border-2 border-ink text-xs font-bold bg-cream text-ink hover:bg-sun" data-track="web3">Web3</button>
+                                <button type="button" class="ps-dash-filter-btn px-2.5 py-1 border-2 border-ink text-xs font-bold bg-cream text-ink hover:bg-sun" data-track="beginner">Beginner</button>
+                            </div>
+                        </div>
+
+                        <div id="ps-dash-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. TAB PANE: PROJECT SUBMISSION -->
+                <div id="tab-pane-project-submission" class="dash-tab-pane hidden space-y-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b-2 border-ink pb-4">
+                        <div>
+                            <h3 class="font-bricolage font-extrabold text-2xl md:text-3xl text-ink">Project Submission</h3>
+                            <p class="text-sm text-ink/70">Prepare, draft, validate, and submit your team's hackathon project.</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span id="submission-draft-status" class="text-xs font-bold text-ink/60"></span>
+                            <span id="submission-status-badge" class="px-3 py-1 text-xs font-black uppercase tracking-wider border-2 border-ink bg-sun">
+                                DRAFT
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Selected Problem Context Alert / Empty Prompt -->
+                    <div id="submission-context-card" class="p-4 border-2 border-ink bg-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <!-- Rendered by JS -->
+                    </div>
+
+                    <!-- Locked Submission Alert (Shown when SUBMITTED) -->
+                    <div id="submission-locked-banner" class="hidden p-5 border-3 border-ink bg-green-50 card-neo">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-2xl">🎉</span>
+                            <div>
+                                <h4 class="font-bricolage font-extrabold text-xl text-ink">Project Submitted Successfully (Demo Workspace)</h4>
+                                <p class="text-xs text-ink/80">Your submission has been recorded. Project details are locked for evaluation review.</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-t-2 border-ink/10 flex flex-wrap gap-4 text-xs font-bold">
+                            <div><span class="opacity-60">Submission ID:</span> <span id="locked-sub-id" class="font-mono">sub-001</span></div>
+                            <div><span class="opacity-60">Submitted At:</span> <span id="locked-sub-time" class="font-mono">—</span></div>
+                            <div><span class="opacity-60">Status:</span> <span class="text-green-700 uppercase font-black">SUBMITTED ✓</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Main Submission Form Card -->
+                    <div id="submission-form-card" class="p-6 md:p-8 border-3 border-ink bg-white card-neo space-y-6">
+                        <form id="project-submission-form" class="space-y-6" novalidate>
+                            <!-- 1. Project Title -->
+                            <div>
+                                <label for="sub-project-title" class="block text-xs font-bold uppercase tracking-wider mb-1 text-ink">
+                                    Project Title <span class="text-tomato">*</span>
+                                </label>
+                                <input type="text" id="sub-project-title" required placeholder="e.g. SplitEasy — UPI Expense Sharing" class="w-full px-3.5 py-2.5 border-2 border-ink font-bold text-base bg-cream focus:bg-white outline-none">
+                                <p id="err-project-title" class="hidden text-xs font-bold text-tomato mt-1"></p>
+                            </div>
+
+                            <!-- 2. Short Tagline / Description -->
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label for="sub-short-desc" class="block text-xs font-bold uppercase tracking-wider text-ink">
+                                        Short Tagline / Elevator Pitch <span class="text-tomato">*</span>
+                                    </label>
+                                    <span id="sub-short-desc-count" class="text-[11px] font-mono opacity-60">0 / 250</span>
+                                </div>
+                                <input type="text" id="sub-short-desc" maxlength="250" required placeholder="A 1-sentence summary of what your project does and who it helps." class="w-full px-3.5 py-2.5 border-2 border-ink text-sm bg-cream focus:bg-white outline-none">
+                                <p id="err-short-desc" class="hidden text-xs font-bold text-tomato mt-1"></p>
+                            </div>
+
+                            <!-- 3. Detailed Description / Architecture -->
+                            <div>
+                                <label for="sub-detail-desc" class="block text-xs font-bold uppercase tracking-wider mb-1 text-ink">
+                                    Detailed Overview &amp; Architecture <span class="text-tomato">*</span>
+                                </label>
+                                <textarea id="sub-detail-desc" rows="5" required placeholder="Explain how your project works, architectural decisions, challenges faced during the 24 hours, and future roadmap..." class="w-full px-3.5 py-2.5 border-2 border-ink text-sm bg-cream focus:bg-white outline-none leading-relaxed"></textarea>
+                                <p id="err-detail-desc" class="hidden text-xs font-bold text-tomato mt-1"></p>
+                            </div>
+
+                            <!-- 4. Tech Stack Manager -->
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider mb-1 text-ink">
+                                    Technologies &amp; Frameworks Used <span class="text-tomato">*</span>
+                                </label>
+                                <div id="sub-tech-tags-container" class="p-3 border-2 border-ink bg-white/90 min-h-[50px] flex flex-wrap gap-2 mb-2">
+                                    <!-- Populated by JS -->
+                                </div>
+                                <div class="flex gap-2">
+                                    <input type="text" id="sub-tech-input" placeholder="Type technology (e.g. Next.js, FastAPI, Solidity)..." class="flex-1 px-3 py-1.5 border-2 border-ink text-xs bg-cream outline-none">
+                                    <button type="button" id="sub-add-tech-btn" class="btn-neo px-4 py-1.5 border-2 border-ink bg-sun text-xs font-bold">Add Tech</button>
+                                </div>
+                                <div class="mt-2 flex flex-wrap gap-1.5 items-center">
+                                    <span class="text-[11px] font-bold opacity-60">Suggestions:</span>
+                                    <button type="button" class="sub-tech-chip text-[11px] font-bold px-2 py-0.5 border border-ink bg-cream hover:bg-sun" data-tech="React">React</button>
+                                    <button type="button" class="sub-tech-chip text-[11px] font-bold px-2 py-0.5 border border-ink bg-cream hover:bg-sun" data-tech="Node.js">Node.js</button>
+                                    <button type="button" class="sub-tech-chip text-[11px] font-bold px-2 py-0.5 border border-ink bg-cream hover:bg-sun" data-tech="Python">Python</button>
+                                    <button type="button" class="sub-tech-chip text-[11px] font-bold px-2 py-0.5 border border-ink bg-cream hover:bg-sun" data-tech="TailwindCSS">TailwindCSS</button>
+                                    <button type="button" class="sub-tech-chip text-[11px] font-bold px-2 py-0.5 border border-ink bg-cream hover:bg-sun" data-tech="PostgreSQL">PostgreSQL</button>
+                                    <button type="button" class="sub-tech-chip text-[11px] font-bold px-2 py-0.5 border border-ink bg-cream hover:bg-sun" data-tech="Docker">Docker</button>
+                                </div>
+                                <p id="err-tech-stack" class="hidden text-xs font-bold text-tomato mt-1"></p>
+                            </div>
+
+                            <!-- 5. URL Inputs Grid -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="sub-repo-url" class="block text-xs font-bold uppercase tracking-wider mb-1 text-ink">
+                                        Public Repository URL (GitHub/GitLab) <span class="text-tomato">*</span>
+                                    </label>
+                                    <input type="url" id="sub-repo-url" required placeholder="https://github.com/your-team/repo" class="w-full px-3 py-2 border-2 border-ink font-mono text-xs bg-cream focus:bg-white outline-none">
+                                    <p id="err-repo-url" class="hidden text-xs font-bold text-tomato mt-1"></p>
+                                </div>
+
+                                <div>
+                                    <label for="sub-demo-url" class="block text-xs font-bold uppercase tracking-wider mb-1 text-ink">
+                                        Live Demo URL <span class="opacity-60 font-normal">(Optional)</span>
+                                    </label>
+                                    <input type="url" id="sub-demo-url" placeholder="https://your-demo.vercel.app" class="w-full px-3 py-2 border-2 border-ink font-mono text-xs bg-cream focus:bg-white outline-none">
+                                    <p id="err-demo-url" class="hidden text-xs font-bold text-tomato mt-1"></p>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="sub-pres-url" class="block text-xs font-bold uppercase tracking-wider mb-1 text-ink">
+                                    Demo Video / Loom / Presentation URL <span class="opacity-60 font-normal">(Recommended - max 3 mins)</span>
+                                </label>
+                                <input type="url" id="sub-pres-url" placeholder="https://loom.com/share/your-video or https://youtube.com/watch?v=..." class="w-full px-3 py-2 border-2 border-ink font-mono text-xs bg-cream focus:bg-white outline-none">
+                                <p id="err-pres-url" class="hidden text-xs font-bold text-tomato mt-1"></p>
+                            </div>
+
+                            <!-- Action Buttons Bar -->
+                            <div class="pt-4 border-t-2 border-ink flex flex-col sm:flex-row justify-between items-center gap-4">
+                                <div class="flex items-center gap-2">
+                                    <button type="button" id="sub-save-draft-btn" class="btn-neo px-5 py-2.5 border-2 border-ink bg-white hover:bg-sun font-bricolage font-bold text-sm">
+                                        Save Draft 💾
+                                    </button>
+                                    <span id="sub-manual-save-msg" class="text-xs font-bold"></span>
+                                </div>
+                                <button type="button" id="sub-review-btn" class="btn-neo px-7 py-3 border-2 border-ink bg-cobalt text-cream font-bricolage font-bold text-base w-full sm:w-auto">
+                                    Review &amp; Submit Project 🚀
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 6. TAB PANE: ANNOUNCEMENTS -->
+                <div id="tab-pane-announcements" class="dash-tab-pane hidden space-y-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b-2 border-ink pb-4">
+                        <div>
+                            <h3 class="font-bricolage font-extrabold text-2xl md:text-3xl text-ink">Official Announcements</h3>
+                            <p class="text-sm text-ink/70">Critical updates, workshop schedules, and portal notices.</p>
+                        </div>
+                        <button type="button" id="ann-mark-all-read-btn" class="btn-neo px-4 py-2 border-2 border-ink bg-white hover:bg-sun font-bricolage font-bold text-xs">
+                            Mark All as Read ✓
+                        </button>
+                    </div>
+
+                    <!-- Category Filter Buttons -->
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" class="ann-filter-btn px-3 py-1.5 border-2 border-ink font-bricolage font-bold text-xs bg-cobalt text-cream transition-colors" data-filter="all">All</button>
+                        <button type="button" class="ann-filter-btn px-3 py-1.5 border-2 border-ink font-bricolage font-bold text-xs bg-cream text-ink hover:bg-sun transition-colors" data-filter="registration">Registration</button>
+                        <button type="button" class="ann-filter-btn px-3 py-1.5 border-2 border-ink font-bricolage font-bold text-xs bg-cream text-ink hover:bg-sun transition-colors" data-filter="event">Event</button>
+                        <button type="button" class="ann-filter-btn px-3 py-1.5 border-2 border-ink font-bricolage font-bold text-xs bg-cream text-ink hover:bg-sun transition-colors" data-filter="submissions">Submissions</button>
+                        <button type="button" class="ann-filter-btn px-3 py-1.5 border-2 border-ink font-bricolage font-bold text-xs bg-cream text-ink hover:bg-sun transition-colors" data-filter="community">Community</button>
+                        <button type="button" class="ann-filter-btn px-3 py-1.5 border-2 border-ink font-bricolage font-bold text-xs bg-cream text-ink hover:bg-sun transition-colors" data-filter="beginner">Beginner</button>
+                    </div>
+
+                    <!-- Announcements Feed -->
+                    <div id="announcements-list-container" class="space-y-4">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- 5. TAB PANE: EVENT INFO & RESOURCES -->
+                <div id="tab-pane-event-info" class="dash-tab-pane hidden space-y-6">
+                    <div class="p-6 md:p-8 border-3 border-ink bg-white card-neo">
+                        <h3 class="font-bricolage font-extrabold text-2xl md:text-3xl text-ink mb-2">Event Information &amp; Submission Rules</h3>
+                        <p class="text-sm text-ink/70 mb-6">Key deadlines, technical requirements, and support channels for the 24-hour sprint.</p>
+
+                        <!-- Schedule Timeline Table -->
+                        <div class="mb-8">
+                            <h4 class="font-bricolage font-bold text-xl text-ink mb-3 flex items-center gap-2">
+                                <span>⏱️</span> 24-Hour Online Schedule
+                            </h4>
+                            <div class="border-2 border-ink overflow-x-auto">
+                                <table class="w-full text-left text-xs sm:text-sm">
+                                    <thead class="bg-sun border-b-2 border-ink font-bricolage font-bold text-ink">
+                                        <tr>
+                                            <th class="p-3 border-r-2 border-ink">Time (IST)</th>
+                                            <th class="p-3 border-r-2 border-ink">Milestone</th>
+                                            <th class="p-3">Platform</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y-2 divide-ink bg-white">
+                                        <tr>
+                                            <td class="p-3 font-mono font-bold border-r-2 border-ink">Day 1 • 09:30 AM</td>
+                                            <td class="p-3 font-bold border-r-2 border-ink">Online Kickoff Stream</td>
+                                            <td class="p-3">YouTube Live &amp; Discord</td>
+                                        </tr>
+                                        <tr class="bg-cream/40">
+                                            <td class="p-3 font-mono font-bold border-r-2 border-ink">Day 1 • 10:00 AM</td>
+                                            <td class="p-3 font-bold border-r-2 border-ink">Hacking Officially Starts • Problem Statements Live</td>
+                                            <td class="p-3">CampusCrafters Portal</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-3 font-mono font-bold border-r-2 border-ink">Day 1 • 02:00 PM</td>
+                                            <td class="p-3 font-bold border-r-2 border-ink">Mentor Checkpoint 1</td>
+                                            <td class="p-3">Discord Voice Rooms</td>
+                                        </tr>
+                                        <tr class="bg-cream/40">
+                                            <td class="p-3 font-mono font-bold border-r-2 border-ink">Day 1 • 08:00 PM</td>
+                                            <td class="p-3 font-bold border-r-2 border-ink">Midway Progress Check</td>
+                                            <td class="p-3">Discord</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-3 font-mono font-bold border-r-2 border-ink">Day 2 • 08:00 AM</td>
+                                            <td class="p-3 font-bold border-r-2 border-ink">Submission Portal Opens</td>
+                                            <td class="p-3">CampusCrafters Portal</td>
+                                        </tr>
+                                        <tr class="bg-tomato/20">
+                                            <td class="p-3 font-mono font-bold border-r-2 border-ink text-tomato">Day 2 • 10:00 AM</td>
+                                            <td class="p-3 font-bold border-r-2 border-ink text-tomato">Hacking Ends • Hard Submission Deadline</td>
+                                            <td class="p-3 font-bold text-tomato">Portal Closes</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Submission Requirements -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                            <div class="p-5 border-2 border-ink bg-cream/40">
+                                <h4 class="font-bricolage font-bold text-lg text-ink mb-2">📋 Submission Requirements</h4>
+                                <ul class="space-y-2 text-xs sm:text-sm text-ink/80 list-disc list-inside">
+                                    <li><strong>Public GitHub Repository:</strong> Clean git commit history during the 24 hours.</li>
+                                    <li><strong>Demo Video:</strong> Maximum 3 minutes hosted on Loom, YouTube, or Google Drive.</li>
+                                    <li><strong>README.md:</strong> Architecture explanation, setup steps, and track declaration.</li>
+                                    <li><strong>Open Source License:</strong> MIT or Apache 2.0 recommended.</li>
+                                </ul>
+                            </div>
+                            <div class="p-5 border-2 border-ink bg-cream/40">
+                                <h4 class="font-bricolage font-bold text-lg text-ink mb-2">💬 Help &amp; Support</h4>
+                                <ul class="space-y-2 text-xs sm:text-sm text-ink/80">
+                                    <li><strong>Discord Help Desk:</strong> 24/7 volunteer mentor queue.</li>
+                                    <li><strong>Email Support:</strong> <a href="mailto:support@campuscrafters.com" class="text-cobalt underline">support@campuscrafters.com</a></li>
+                                    <li><strong>Provisional Specs:</strong> Teams must have 2–5 active members.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Public Navigation Buttons -->
+                        <div class="flex flex-wrap gap-4 pt-4 border-t-2 border-ink">
+                            <a href="themes.html" class="btn-neo px-5 py-2.5 bg-cream border-2 border-ink font-bricolage font-bold text-sm">
+                                View Themes Overview →
+                            </a>
+                            <a href="problem-statements.html" class="btn-neo px-5 py-2.5 bg-cream border-2 border-ink font-bricolage font-bold text-sm">
+                                View Problem Statements →
+                            </a>
+                            <a href="faq.html" class="btn-neo px-5 py-2.5 bg-cream border-2 border-ink font-bricolage font-bold text-sm">
+                                View Full Hackathon FAQ →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <!-- TICKET PASS MODAL -->
+    <div id="ticket-pass-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop fixed inset-0 bg-ink/60 backdrop-blur-sm"></div>
+        <div class="relative bg-white border-4 border-ink card-neo w-full max-w-lg p-6 sm:p-8 z-10 overflow-y-auto max-h-[90vh]">
+            <div class="flex justify-between items-center border-b-2 border-ink pb-3 mb-4">
+                <span class="font-bricolage font-bold text-lg text-ink">Digital Hacker Pass</span>
+                <button type="button" id="ticket-pass-close-btn" class="p-1.5 border-2 border-ink hover:bg-sun transition-colors text-ink font-black">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Pass Content Card -->
+            <div class="ticket-neo p-6 space-y-4">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-cobalt block">Campus Sprint 2026</span>
+                        <h4 class="font-bricolage font-extrabold text-2xl text-ink leading-tight" id="modal-ticket-name">Arjun Mehta</h4>
+                        <p class="text-xs text-ink/70" id="modal-ticket-college">Apex Institute of Technology</p>
+                    </div>
+                    <div class="w-12 h-12 bg-sun border-2 border-ink rounded-full flex items-center justify-center font-bold text-lg">
+                        🎟️
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 py-3 border-y-2 border-dashed border-ink/40 text-xs">
+                    <div>
+                        <span class="opacity-60 block">Assigned Track</span>
+                        <span class="font-bold text-ink" id="modal-ticket-track">FinTech</span>
+                    </div>
+                    <div>
+                        <span class="opacity-60 block">Registration ID</span>
+                        <span class="font-mono font-bold text-ink" id="modal-ticket-regid">REG-2026-DEMO</span>
+                    </div>
+                    <div>
+                        <span class="opacity-60 block">Ticket Code</span>
+                        <span class="font-mono font-bold text-cobalt" id="modal-ticket-code">CS26-4F7K-9R2M</span>
+                    </div>
+                    <div>
+                        <span class="opacity-60 block">Registration Date</span>
+                        <span class="font-bold text-ink" id="modal-ticket-date">October 25, 2026</span>
+                    </div>
+                </div>
+
+                <!-- Crisp SVG QR Code Representation -->
+                <div class="text-center pt-2">
+                    <div class="inline-block p-3 bg-cream border-2 border-ink shadow-[3px_3px_0_#111111]">
+                        <svg width="120" height="120" viewBox="0 0 100 100" class="mx-auto">
+                            <rect width="100" height="100" fill="#FFFFFF"/>
+                            <!-- Outer finder top-left -->
+                            <rect x="10" y="10" width="24" height="24" fill="#111111"/>
+                            <rect x="14" y="14" width="16" height="16" fill="#FFFFFF"/>
+                            <rect x="18" y="18" width="8" height="8" fill="#111111"/>
+                            <!-- Outer finder top-right -->
+                            <rect x="66" y="10" width="24" height="24" fill="#111111"/>
+                            <rect x="70" y="14" width="16" height="16" fill="#FFFFFF"/>
+                            <rect x="74" y="18" width="8" height="8" fill="#111111"/>
+                            <!-- Outer finder bottom-left -->
+                            <rect x="10" y="66" width="24" height="24" fill="#111111"/>
+                            <rect x="14" y="70" width="16" height="16" fill="#FFFFFF"/>
+                            <rect x="18" y="74" width="8" height="8" fill="#111111"/>
+                            <!-- Data bits pattern -->
+                            <rect x="42" y="12" width="6" height="6" fill="#111111"/>
+                            <rect x="52" y="18" width="6" height="6" fill="#111111"/>
+                            <rect x="42" y="28" width="6" height="6" fill="#111111"/>
+                            <rect x="52" y="34" width="6" height="6" fill="#111111"/>
+                            <rect x="14" y="44" width="6" height="6" fill="#111111"/>
+                            <rect x="24" y="52" width="6" height="6" fill="#111111"/>
+                            <rect x="36" y="48" width="6" height="6" fill="#111111"/>
+                            <rect x="48" y="48" width="6" height="6" fill="#111111"/>
+                            <rect x="58" y="48" width="6" height="6" fill="#111111"/>
+                            <rect x="68" y="48" width="6" height="6" fill="#111111"/>
+                            <rect x="80" y="52" width="6" height="6" fill="#111111"/>
+                            <rect x="42" y="66" width="6" height="6" fill="#111111"/>
+                            <rect x="52" y="72" width="6" height="6" fill="#111111"/>
+                            <rect x="42" y="80" width="6" height="6" fill="#111111"/>
+                            <rect x="68" y="66" width="6" height="6" fill="#111111"/>
+                            <rect x="78" y="76" width="6" height="6" fill="#111111"/>
+                        </svg>
+                    </div>
+                    <p class="text-[11px] font-bold text-ink/70 mt-2">Verified Online Credential • CampusCrafters</p>
+                </div>
+            </div>
+
+            <div class="mt-4 flex justify-end">
+                <button type="button" onclick="window.print()" class="btn-neo px-4 py-2 border-2 border-ink bg-sun font-bricolage font-bold text-xs">
+                    Print / Save Pass
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROBLEM STATEMENT DETAILS MODAL (FOR DASHBOARD) -->
+    <div id="ps-dash-detail-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop fixed inset-0 bg-ink/60 backdrop-blur-sm"></div>
+        <div class="relative bg-cream border-4 border-ink card-neo w-full max-w-2xl p-6 sm:p-8 z-10 overflow-y-auto max-h-[90vh]">
+            <div class="flex justify-between items-start gap-4 border-b-2 border-ink pb-4 mb-4">
+                <div>
+                    <div class="flex items-center gap-2 mb-2 flex-wrap">
+                        <span id="ps-modal-track" class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 border border-ink bg-cobalt text-cream">FinTech</span>
+                        <span id="ps-modal-diff" class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 border border-ink bg-white text-ink">Intermediate</span>
+                    </div>
+                    <h3 id="ps-modal-title" class="font-bricolage font-extrabold text-2xl text-ink leading-tight">Problem Statement Title</h3>
+                    <p id="ps-modal-domain" class="text-xs font-bold text-ink/60 mt-1">Domain</p>
+                </div>
+                <button type="button" id="ps-modal-close-btn" class="p-1.5 border-2 border-ink bg-white hover:bg-sun transition-colors text-ink font-black shrink-0">
+                    ✕
+                </button>
+            </div>
+
+            <div class="space-y-5 text-sm text-ink/80 leading-relaxed">
+                <div>
+                    <h5 class="font-bricolage font-bold text-base text-ink mb-1">Description</h5>
+                    <p id="ps-modal-desc" class="bg-white p-4 border-2 border-ink"></p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 border-2 border-ink bg-white">
+                        <h5 class="font-bricolage font-bold text-sm text-ink mb-2">📋 Expected Deliverables</h5>
+                        <ul id="ps-modal-deliverables" class="space-y-1.5 text-xs"></ul>
+                    </div>
+
+                    <div class="p-4 border-2 border-ink bg-white">
+                        <h5 class="font-bricolage font-bold text-sm text-ink mb-2">⚖️ Evaluation Criteria</h5>
+                        <ul id="ps-modal-criteria" class="space-y-1.5 text-xs"></ul>
+                    </div>
+                </div>
+
+                <div>
+                    <h5 class="font-bricolage font-bold text-xs uppercase tracking-wider text-ink/70 mb-1.5">Tags</h5>
+                    <div id="ps-modal-tags" class="flex flex-wrap gap-1.5"></div>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t-2 border-ink flex justify-end gap-3">
+                <button type="button" id="ps-modal-cancel-btn" class="btn-neo px-4 py-2 border-2 border-ink bg-white font-bricolage font-bold text-xs">
+                    Close
+                </button>
+                <button type="button" id="ps-modal-select-btn" class="btn-neo px-6 py-2 border-2 border-ink bg-cobalt text-cream font-bricolage font-bold text-xs">
+                    Select This Problem Statement 🎯
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBMISSION REVIEW & CONFIRMATION MODAL -->
+    <div id="submission-review-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop fixed inset-0 bg-ink/60 backdrop-blur-sm"></div>
+        <div class="relative bg-white border-4 border-ink card-neo w-full max-w-xl p-6 sm:p-8 z-10 overflow-y-auto max-h-[90vh]">
+            <div class="flex justify-between items-center border-b-2 border-ink pb-3 mb-4">
+                <span class="font-bricolage font-extrabold text-xl text-ink">Review &amp; Confirm Submission</span>
+                <button type="button" id="sub-review-close-btn" class="p-1.5 border-2 border-ink hover:bg-sun transition-colors text-ink font-black">
+                    ✕
+                </button>
+            </div>
+
+            <div class="p-4 border-2 border-ink bg-sun/30 mb-4 flex items-start gap-3">
+                <span class="text-xl">⚠️</span>
+                <div class="text-xs text-ink/90 font-medium">
+                    <strong>Important Final Step:</strong> Submitting will lock your project for evaluation review. Please ensure all repository links, live demos, and descriptions are complete and accessible.
+                </div>
+            </div>
+
+            <!-- Review Summary Table -->
+            <div class="space-y-3 text-xs border-2 border-ink p-4 bg-cream/40 mb-5">
+                <div>
+                    <span class="opacity-60 block font-bold uppercase">Project Title</span>
+                    <span id="rev-project-title" class="font-bricolage font-bold text-base text-ink block mt-0.5">Title</span>
+                </div>
+                <div>
+                    <span class="opacity-60 block font-bold uppercase">Target Problem Statement</span>
+                    <span id="rev-problem-statement" class="font-bold text-cobalt block mt-0.5">Problem Statement</span>
+                </div>
+                <div>
+                    <span class="opacity-60 block font-bold uppercase">Team / Submitter</span>
+                    <span id="rev-submitter" class="font-bold text-ink block mt-0.5">Team Name</span>
+                </div>
+                <div>
+                    <span class="opacity-60 block font-bold uppercase">Declared Tech Stack</span>
+                    <div id="rev-tech-stack" class="flex flex-wrap gap-1 mt-1"></div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-ink/20 font-mono">
+                    <div>
+                        <span class="opacity-60 block font-sans font-bold uppercase">Repository</span>
+                        <a id="rev-repo-url" href="#" target="_blank" rel="noopener noreferrer" class="text-cobalt underline truncate block mt-0.5">https://...</a>
+                    </div>
+                    <div>
+                        <span class="opacity-60 block font-sans font-bold uppercase">Live Demo</span>
+                        <span id="rev-demo-url" class="truncate block mt-0.5">None provided</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confirmation Checkbox -->
+            <label class="flex items-start gap-2.5 cursor-pointer text-xs font-bold text-ink mb-5 select-none">
+                <input type="checkbox" id="rev-confirm-checkbox" class="mt-0.5 w-4 h-4 border-2 border-ink rounded-none text-cobalt focus:ring-0">
+                <span>I confirm our project was built during the hackathon sprint window and our repository is publicly accessible.</span>
+            </label>
+
+            <!-- Actions -->
+            <div class="flex justify-end gap-3 pt-3 border-t-2 border-ink">
+                <button type="button" id="rev-cancel-btn" class="btn-neo px-4 py-2.5 border-2 border-ink bg-white font-bricolage font-bold text-xs">
+                    Go Back &amp; Edit
+                </button>
+                <button type="button" id="rev-confirm-submit-btn" disabled class="btn-neo px-6 py-2.5 border-2 border-ink bg-cobalt text-cream font-bricolage font-bold text-sm opacity-50 cursor-not-allowed">
+                    Confirm &amp; Submit Project 🚀
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. Footer -->
+    <footer class="border-t-2 border-ink bg-ink text-cream px-6 py-6 mt-auto">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-bold opacity-80">
+            <p>© 2026 CampusCrafters. 24-Hour Online Hackathon.</p>
+            <div class="flex gap-4">
+                <a href="campus_sprint_hackathon.html" class="hover:text-sun">Home</a>
+                <a href="themes.html" class="hover:text-sun">Themes</a>
+                <a href="problem-statements.html" class="hover:text-sun">Problems</a>
+                <a href="faq.html" class="hover:text-sun">FAQ</a>
+                <a href="mailto:support@campuscrafters.com" class="hover:text-sun">Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <!-- Phase 3: State & Mock Data -->
+    <script src="js/utils/storage.js"></script>
+    <script src="js/state/state-config.js"></script>
+    <script src="js/state/state-manager.js"></script>
+    <script src="js/data/tracks.js"></script>
+    <script src="js/data/problem-statements.js"></script>
+    <script src="js/data/announcements.js"></script>
+    <script src="js/data/participants.js"></script>
+    <script src="js/data/teams.js"></script>
+    <script src="js/data/submissions.js"></script>
+    <script src="js/data/index.js"></script>
+
+    <!-- Phase 4: Auth & Registration Stepper -->
+    <script src="js/auth/auth-service.js"></script>
+    <script src="js/auth/auth-modal.js"></script>
+    <script src="js/registration/registration-service.js"></script>
+    <script src="js/registration/waitlist-modal.js"></script>
+    <script src="js/registration/registration-stepper.js"></script>
+
+    <!-- Phase 6: Teams & Dashboard Services -->
+    <script src="js/teams/team-service.js"></script>
+    <script src="js/dashboard/dashboard-service.js"></script>
+
+    <!-- Phase 7: Problem Selection & Project Submission Services -->
+    <script src="js/submissions/problem-selection-service.js"></script>
+    <script src="js/submissions/submission-service.js"></script>
+
+    <script src="js/dashboard/dashboard-controller.js"></script>
+
+    <!-- Shared Navigation -->
+    <script src="js/utils/nav.js"></script>
+
+    <!-- Developer State Switcher (?dev=1) -->
+    <script src="js/dev/state-switcher.js"></script>
+</body>
+</html>
+

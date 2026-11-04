@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Sprint | College Hackathon</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FFF8EB',
+                        ink: '#111111',
+                        cobalt: '#2B50FF',
+                        sun: '#FFC83D',
+                    },
+                    fontFamily: {
+                        bricolage: ['"Bricolage Grotesque"', 'sans-serif'],
+                        dmsans: ['"DM Sans"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #FFF8EB;
+            color: #111111;
+        }
+
+        /* Neo-brutalism Button Styles */
+        .btn-neo {
+            box-shadow: 4px 4px 0px #111111;
+            transition: all 0.15s ease-out;
+        }
+        .btn-neo:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #111111;
+        }
+        .btn-neo:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px #111111;
+        }
+
+        /* Neo-brutalism Card Styles */
+        .card-neo {
+            box-shadow: 6px 6px 0px #111111;
+            transition: all 0.3s ease;
+        }
+        
+        /* Highlight Swipe Animation */
+        .highlight-swipe {
+            transform-origin: left;
+            transform: scaleX(0);
+            animation: swipeRight 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
+        }
+        @keyframes swipeRight {
+            to { transform: scaleX(1); }
+        }
+
+        /* Rotating Badge */
+        .rotate-badge {
+            animation: rotate 12s linear infinite;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Fade Up on Scroll */
+        .fade-up-item {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-up-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Accordion Styles */
+        .accordion-content {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.3s ease-out;
+        }
+        .accordion-content.open {
+            grid-template-rows: 1fr;
+        }
+        .accordion-inner {
+            overflow: hidden;
+        }
+        .icon-rotate {
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+        .icon-rotate.open {
+            transform: rotate(45deg);
+        }
+
+        /* Mobile Drawer */
+        .mobile-drawer { position: fixed; inset: 0; z-index: 100; pointer-events: none; }
+        .mobile-drawer.open { pointer-events: auto; }
+        .drawer-backdrop { position: absolute; inset: 0; background: rgba(17,17,17,0.5); opacity: 0; transition: opacity 0.25s ease; }
+        .mobile-drawer.open .drawer-backdrop { opacity: 1; }
+        .drawer-panel { position: absolute; right: 0; top: 0; bottom: 0; width: min(320px, 85vw); background: #FFF8EB; border-left: 4px solid #111111; box-shadow: -6px 0 0 #111111; transform: translateX(100%); transition: transform 0.25s cubic-bezier(0.22,1,0.36,1); display: flex; flex-direction: column; padding: 1.5rem; gap: 0.5rem; overflow-y: auto; }
+        .mobile-drawer.open .drawer-panel { transform: translateX(0); }
+
+        /* Remove animations for users who prefer reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            .rotate-badge {
+                animation: none;
+            }
+            .highlight-swipe {
+                transform: scaleX(1);
+                animation: none;
+            }
+            .fade-up-item {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
+            .btn-neo:hover, .btn-neo:active {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body class="font-dmsans antialiased overflow-x-hidden">
+
+    <!-- 1. Sticky Navigation -->
+    <nav class="sticky top-0 z-50 bg-cream border-b-2 border-ink px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" class="font-bricolage font-bold text-2xl tracking-tight flex items-center gap-2">
+                <div class="w-8 h-8 bg-sun border-2 border-ink rounded-full flex items-center justify-center">
+                    <div class="w-3 h-3 bg-cobalt rounded-full"></div>
+                </div>
+                Campus Sprint
+            </a>
+            
+            <!-- Desktop Links -->
+            <div class="hidden md:flex gap-8 font-bold font-bricolage text-lg">
+                <a href="#about" class="hover:text-cobalt transition-colors">About</a>
+                <a href="themes.html" class="hover:text-cobalt transition-colors">Themes</a>
+                <a href="problem-statements.html" class="hover:text-cobalt transition-colors">Problems</a>
+                <a href="#schedule" class="hover:text-cobalt transition-colors">Schedule</a>
+                <a href="#prizes" class="hover:text-cobalt transition-colors">Prizes</a>
+                <a href="faq.html" class="hover:text-cobalt transition-colors">FAQ</a>
+                <a href="dashboard.html" class="nav-dashboard-link hover:text-cobalt transition-colors" style="display:none;">Dashboard</a>
+            </div>
+
+            <!-- Nav Actions / User Status Area -->
+            <div class="hidden sm:flex items-center gap-3" id="nav-actions-container">
+                <button id="nav-login-btn" class="font-bricolage font-bold text-base text-ink hover:text-cobalt transition-colors px-2 py-1">Sign In</button>
+                <button id="nav-cta-btn" class="btn-neo bg-cobalt text-cream font-bricolage font-bold text-lg px-6 py-2 border-2 border-ink">Register</button>
+                <button id="nav-logout-btn" style="display:none;" class="text-xs font-bold text-ink underline hover:text-tomato ml-1">Log Out</button>
+            </div>
+            
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="sm:hidden block p-2" aria-expanded="false" aria-label="Open navigation menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-ink">
+                    <path d="M3 12h18M3 6h18M3 18h18"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-drawer" class="mobile-drawer">
+        <div class="drawer-backdrop"></div>
+        <div class="drawer-panel">
+            <div class="flex justify-between items-center mb-4">
+                <span class="font-bricolage font-bold text-xl">Menu</span>
+                <button id="drawer-close-btn" aria-label="Close navigation menu" class="p-2 border-2 border-ink bg-cream hover:bg-sun transition-colors">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <a href="#about" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors">About</a>
+            <a href="themes.html" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors">Themes</a>
+            <a href="problem-statements.html" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors">Problems</a>
+            <a href="#schedule" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors">Schedule</a>
+            <a href="#prizes" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors">Prizes</a>
+            <a href="faq.html" class="font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors">FAQ</a>
+            <a href="dashboard.html" class="nav-dashboard-link font-bricolage font-bold text-xl py-3 border-b-2 border-ink/20 hover:text-cobalt transition-colors" style="display:none;">Dashboard</a>
+            <div class="mt-4 flex flex-col gap-2 pt-4 border-t-2 border-ink/20" id="drawer-actions-container">
+                <button id="drawer-login-btn" class="font-bricolage font-bold text-base text-center py-2 border-2 border-ink bg-white card-neo">Sign In</button>
+                <button id="drawer-cta-btn" class="btn-neo w-full bg-cobalt text-cream font-bricolage font-bold text-lg px-6 py-3 border-2 border-ink">Register</button>
+                <button id="drawer-logout-btn" style="display:none;" class="text-xs font-bold text-center underline text-ink mt-2">Log Out</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Hero Section -->
+    <section class="relative px-6 py-20 md:py-32 max-w-7xl mx-auto overflow-hidden">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-12 relative z-10">
+            
+            <div class="md:w-3/5 text-left">
+                <div class="mb-4 inline-flex items-center gap-2 border-2 border-ink bg-white px-3 py-1 font-bricolage font-bold text-sm">
+                    <span class="w-2 h-2 bg-tomato rounded-full block" style="background-color: #FF5A3C;"></span>
+                    [COLLEGE]'s First Hackathon
+                </div>
+                <h1 class="font-bricolage font-extrabold text-5xl sm:text-6xl md:text-7xl leading-[1.1] mb-6">
+                    Build something 
+                    <span class="relative inline-block whitespace-nowrap">
+                        <span class="relative z-10 text-cobalt px-1">real</span>
+                        <span class="highlight-swipe absolute bottom-2 left-0 w-full h-[40%] bg-sun -z-0"></span>
+                    </span> 
+                    <br>in 24 hours.
+                </h1>
+                <p class="text-xl md:text-2xl font-medium mb-10 max-w-2xl text-ink/80 leading-relaxed">
+                    Bring a team of 2 to 5 and your own laptop. Registration runs through your CampusCrafters account.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-6 items-center">
+                    <button id="hero-cta-btn" class="btn-neo w-full sm:w-auto text-center bg-cobalt text-cream font-bricolage font-bold text-xl px-8 py-4 border-2 border-ink">Register with CampusCrafters</button>
+                    <a href="#schedule" class="font-bricolage font-bold text-xl text-ink underline decoration-2 underline-offset-4 hover:text-cobalt transition-colors">
+                        See schedule
+                    </a>
+                </div>
+            </div>
+
+            <div class="md:w-2/5 flex justify-center relative">
+                <!-- Circular Text Badge using SVG -->
+                <div class="relative w-64 h-64 md:w-80 md:h-80 flex items-center justify-center">
+                    <svg class="rotate-badge absolute w-full h-full" viewBox="0 0 100 100">
+                        <path id="circlePath" fill="none" d="M 50, 50 m -40, 0 a 40,40 0 1,1 80,0 a 40,40 0 1,1 -80,0" />
+                        <text class="font-bricolage font-bold uppercase tracking-widest text-[9.5px]" fill="#111111">
+                            <textPath href="#circlePath" startOffset="0%">
+                                REGISTER · FREE · 24 HRS · REGISTER · FREE · 24 HRS ·
+                            </textPath>
+                        </text>
+                    </svg>
+                    <!-- Center Graphic -->
+                    <div class="w-24 h-24 bg-sun border-4 border-ink rounded-full card-neo flex items-center justify-center">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- 3. About the Event & Why Join -->
+    <section id="about" class="border-y-2 border-ink bg-sun py-20 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
+                <div class="fade-up-item">
+                    <h2 class="font-bricolage font-extrabold text-4xl md:text-5xl mb-6">What is Campus Sprint?</h2>
+                    <p class="text-xl font-medium mb-6">A 24-hour, in-person hackathon for students, organized by CampusCrafters. Be part of the first one.</p>
+                    <div class="flex flex-wrap gap-4">
+                        <span class="border-2 border-ink bg-white px-4 py-2 font-bold card-neo">Nov 15-16</span>
+                        <span class="border-2 border-ink bg-white px-4 py-2 font-bold card-neo">24 Hours</span>
+                        <span class="border-2 border-ink bg-white px-4 py-2 font-bold card-neo">Main Hall, Campus</span>
+                    </div>
+                </div>
+                <div class="card-neo border-2 border-ink bg-cream p-8 fade-up-item">
+                    <h3 class="font-bricolage font-bold text-2xl mb-4" id="countdown-label">Kickoff in</h3>
+                    <div id="countdown-display" class="flex gap-4 text-center font-bricolage text-3xl font-extrabold text-cobalt" aria-live="polite" aria-label="Event countdown">
+                        <div><span id="cd-days">--</span><span class="block text-sm text-ink font-dmsans font-bold uppercase mt-1">Days</span></div>
+                        <div class="self-start pt-1">:</div>
+                        <div><span id="cd-hours">--</span><span class="block text-sm text-ink font-dmsans font-bold uppercase mt-1">Hrs</span></div>
+                        <div class="self-start pt-1">:</div>
+                        <div><span id="cd-mins">--</span><span class="block text-sm text-ink font-dmsans font-bold uppercase mt-1">Mins</span></div>
+                        <div class="self-start pt-1">:</div>
+                        <div><span id="cd-secs">--</span><span class="block text-sm text-ink font-dmsans font-bold uppercase mt-1">Secs</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <h2 class="font-bricolage font-extrabold text-4xl md:text-5xl mb-10 text-center fade-up-item">Why Join</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="card-neo border-2 border-ink bg-white p-8 fade-up-item">
+                    <h3 class="font-bricolage font-bold text-2xl mb-4 text-cobalt">Build</h3>
+                    <p class="font-medium">Turn an idea into a working project in a single day.</p>
+                </div>
+                <div class="card-neo border-2 border-ink bg-white p-8 fade-up-item" style="transition-delay: 100ms;">
+                    <h3 class="font-bricolage font-bold text-2xl mb-4 text-cobalt">Learn</h3>
+                    <p class="font-medium">Pick up new skills by building alongside your team.</p>
+                </div>
+                <div class="card-neo border-2 border-ink bg-white p-8 fade-up-item" style="transition-delay: 200ms;">
+                    <h3 class="font-bricolage font-bold text-2xl mb-4 text-cobalt">Win</h3>
+                    <p class="font-medium">Compete for prizes and earn campus-wide recognition.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. How it works -->
+    <section id="how-it-works" class="px-6 py-24 max-w-7xl mx-auto">
+        <h2 class="font-bricolage font-extrabold text-4xl md:text-5xl mb-16 text-center fade-up-item">How it works</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- Step 1 -->
+            <div class="card-neo border-2 border-ink bg-cream p-8 fade-up-item hover:-translate-y-2 flex flex-col h-full group relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-sun rounded-full opacity-20 group-hover:scale-150 transition-transform duration-500"></div>
+                <div class="font-bricolage font-black text-5xl text-cobalt mb-6">1</div>
+                <h3 class="font-bricolage font-bold text-2xl mb-4 relative z-10">Join & Register</h3>
+                <p class="font-medium text-lg leading-relaxed relative z-10">Log in with your CampusCrafters account and answer a few event questions to secure your spot.</p>
+            </div>
+            
+            <!-- Step 2 -->
+            <div class="card-neo border-2 border-ink bg-cream p-8 fade-up-item hover:-translate-y-2 flex flex-col h-full group relative overflow-hidden" style="transition-delay: 100ms;">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-cobalt rounded-full opacity-10 group-hover:scale-150 transition-transform duration-500"></div>
+                <div class="font-bricolage font-black text-5xl text-sun mb-6" style="text-shadow: 2px 2px 0 #111;">2</div>
+                <h3 class="font-bricolage font-bold text-2xl mb-4 relative z-10">Form a team</h3>
+                <p class="font-medium text-lg leading-relaxed relative z-10">Create a team or join one with a code. Teams must have exactly 2 to 5 members.</p>
+            </div>
+            
+            <!-- Step 3 -->
+            <div class="card-neo border-2 border-ink bg-cream p-8 fade-up-item hover:-translate-y-2 flex flex-col h-full group relative overflow-hidden" style="transition-delay: 200ms;">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-sun rounded-full opacity-20 group-hover:scale-150 transition-transform duration-500"></div>
+                <div class="font-bricolage font-black text-5xl text-cobalt mb-6">3</div>
+                <h3 class="font-bricolage font-bold text-2xl mb-4 relative z-10">Build (24h)</h3>
+                <p class="font-medium text-lg leading-relaxed relative z-10">Problem statements unlock at kickoff. Grab your laptop, grab some coffee, and start building.</p>
+            </div>
+            
+            <!-- Step 4 -->
+            <div class="card-neo border-2 border-ink bg-cream p-8 fade-up-item hover:-translate-y-2 flex flex-col h-full group relative overflow-hidden" style="transition-delay: 300ms;">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-cobalt rounded-full opacity-10 group-hover:scale-150 transition-transform duration-500"></div>
+                <div class="font-bricolage font-black text-5xl text-sun mb-6" style="text-shadow: 2px 2px 0 #111;">4</div>
+                <h3 class="font-bricolage font-bold text-2xl mb-4 relative z-10">Demo & Win</h3>
+                <p class="font-medium text-lg leading-relaxed relative z-10">Submit your project repo online and present your demo on site to the judges.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. What you get -->
+    <section class="border-y-2 border-ink bg-cobalt text-cream py-24 px-6 relative overflow-hidden">
+        <!-- Background decoration -->
+        <div class="absolute -right-20 -top-20 w-96 h-96 bg-cream rounded-full opacity-10"></div>
+        
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-12 items-center relative z-10">
+            <div class="md:w-1/2 fade-up-item">
+                <h2 class="font-bricolage font-extrabold text-4xl md:text-5xl mb-6">Why a CampusCrafters account?</h2>
+                <p class="text-xl mb-8 leading-relaxed">Registering uses your CampusCrafters account, meaning your hackathon experience extends far beyond the 24 hours.</p>
+                <ul class="space-y-4 text-lg font-medium">
+                    <li class="flex items-start gap-3">
+                        <span class="text-sun font-black mt-1 text-xl">✓</span> Showcase your hackathon projects on your permanent portfolio.
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-sun font-black mt-1 text-xl">✓</span> Connect with teammates and mentors year-round.
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-sun font-black mt-1 text-xl">✓</span> Fast-track your registration for all future campus events.
+                    </li>
+                </ul>
+            </div>
+            <div class="md:w-1/2 w-full fade-up-item flex justify-center">
+                <div class="bg-sun border-4 border-ink p-10 card-neo transform rotate-2 max-w-sm w-full hover:-rotate-1 transition-transform duration-300">
+                    <h3 class="font-bricolage font-bold text-ink text-4xl mb-4">Create. Connect. Lead.</h3>
+                    <p class="text-ink font-bold text-xl mb-6">Join 500+ student builders on the platform.</p>
+                    <button class="btn-neo bg-cream text-ink font-bricolage font-bold text-lg px-6 py-3 border-2 border-ink w-full">
+                        Explore Platform
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Tracks -->
+    <section id="tracks" class="py-24 px-6 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="font-bricolage font-extrabold text-4xl md:text-5xl mb-4 fade-up-item">Tracks &amp; Themes</h2>
+            <p class="text-xl font-medium mb-12 text-ink/70 fade-up-item">Pick a track that matches your passion. All levels welcome.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Track 1: FinTech -->
+                <div class="card-neo border-2 border-ink bg-cobalt text-cream p-8 fade-up-item flex flex-col justify-between min-h-[280px] hover:-rotate-1 hover:scale-105 transition-transform duration-300 transform cursor-pointer">
+                    <div>
+                        <div class="w-12 h-12 bg-sun border-2 border-ink rounded-full flex items-center justify-center mb-6">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                        </div>
+                        <h3 class="font-bricolage font-bold text-2xl mb-3 text-cream">FinTech</h3>
+                        <p class="font-medium text-cream/80 text-sm leading-relaxed">Reimagine how money moves. Build tools that make financial services smarter, fairer, and more accessible.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-6">
+                        <span class="bg-sun text-ink text-xs font-bold px-2 py-1 border border-ink">Payments</span>
+                        <span class="bg-sun text-ink text-xs font-bold px-2 py-1 border border-ink">Budgeting</span>
+                        <span class="bg-sun text-ink text-xs font-bold px-2 py-1 border border-ink">Lending</span>
+                    </div>
+                </div>
+                <!-- Track 2: Social Good -->
+                <div class="card-neo border-2 border-ink bg-cream p-8 fade-up-item flex flex-col justify-between min-h-[280px] hover:rotate-1 hover:scale-105 transition-transform duration-300 transform cursor-pointer" style="transition-delay:100ms;">
+                    <div>
+                        <div class="w-12 h-12 bg-cobalt border-2 border-ink rounded-full flex items-center justify-center mb-6">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFF8EB" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        </div>
+                        <h3 class="font-bricolage font-bold text-2xl mb-3">Social Good</h3>
+                        <p class="font-medium text-ink/80 text-sm leading-relaxed">Use technology as a force for community impact. Tackle real problems in education, health, environment, or civic life.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-6">
+                        <span class="bg-ink text-cream text-xs font-bold px-2 py-1">Education</span>
+                        <span class="bg-ink text-cream text-xs font-bold px-2 py-1">Health</span>
+                        <span class="bg-ink text-cream text-xs font-bold px-2 py-1">Civic</span>
+                    </div>
+                </div>
+                <!-- Track 3: Web3 -->
+                <div class="card-neo border-2 border-ink bg-cream p-8 fade-up-item flex flex-col justify-between min-h-[280px] hover:-rotate-2 hover:scale-105 transition-transform duration-300 transform cursor-pointer" style="transition-delay:200ms;">
+                    <div>
+                        <div class="w-12 h-12 bg-sun border-2 border-ink rounded-full flex items-center justify-center mb-6">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                        </div>
+                        <h3 class="font-bricolage font-bold text-2xl mb-3">Web3</h3>
+                        <p class="font-medium text-ink/80 text-sm leading-relaxed">Explore decentralized applications, smart contracts, and the open web. Build the next layer of the internet.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-6">
+                        <span class="bg-cobalt text-cream text-xs font-bold px-2 py-1 border border-ink">DeFi</span>
+                        <span class="bg-cobalt text-cream text-xs font-bold px-2 py-1 border border-ink">NFTs</span>
+                        <span class="bg-cobalt text-cream text-xs font-bold px-2 py-1 border border-ink">DAOs</span>
+                    </div>
+                </div>
+                <!-- Track 4: Beginner -->
+                <div class="card-neo border-2 border-ink bg-[#FF5A3C] text-cream p-8 fade-up-item flex flex-col justify-between min-h-[280px] hover:rotate-2 hover:scale-105 transition-transform duration-300 transform cursor-pointer" style="transition-delay:300ms;">
+                    <div>
+                        <div class="w-12 h-12 bg-white text-ink border-2 border-ink rounded-full flex items-center justify-center mb-6 shadow-[2px_2px_0px_#111111]">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+                        </div>
+                        <h3 class="font-bricolage font-bold text-2xl mb-3 text-cream">Beginner</h3>
+                        <p class="font-medium text-cream/80 text-sm leading-relaxed">First time hacking? This track is designed for you. Dedicated mentors, guided workshops, and a welcoming community.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-6">
+                        <span class="bg-white text-ink text-xs font-bold px-2 py-1 border border-ink">Mentored</span>
+                        <span class="bg-white text-ink text-xs font-bold px-2 py-1 border border-ink">Guided</span>
+                        <span class="bg-white text-ink text-xs font-bold px-2 py-1 border border-ink">Any Skill</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deep Dive Cross-Page Links -->
+            <div class="mt-12 text-center fade-up-item flex flex-col sm:flex-row justify-center gap-4">
+                <a href="themes.html" class="btn-neo bg-sun text-ink font-bricolage font-bold text-lg px-8 py-4 border-2 border-ink inline-block">
+                    Explore All Tracks &amp; Themes in Depth →
+                </a>
+                <a href="problem-statements.html" class="btn-neo bg-white text-ink font-bricolage font-bold text-lg px-8 py-4 border-2 border-ink inline-block">
+                    Browse Problem Statements Directory →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. Schedule / Timeline (Horizontal GSAP Scroll) -->
+    <section id="schedule-container" class="border-y-2 border-ink bg-cream overflow-hidden h-screen flex flex-col justify-center">
+        <div id="schedule" class="py-12 md:py-24 px-6 relative w-full">
+            <div class="max-w-7xl mx-auto mb-16 md:mb-24">
+                <h2 class="font-bricolage font-extrabold text-4xl md:text-5xl mb-4">The 24 Hours</h2>
+                <p class="text-xl font-medium">Everything you need to know about event day.</p>
+            </div>
+
+            <!-- Horizontal scroll track wrapper -->
+            <div class="timeline-wrapper relative w-full">
+                <!-- Continuous connecting line -->
+                <div class="absolute top-[30px] md:top-[40px] left-0 h-2 bg-ink z-0 timeline-line transition-all duration-300"></div>
+                
+                <div class="timeline-track flex gap-8 md:gap-16 flex-nowrap relative z-10 pl-6 md:pl-[calc(50vw-24rem)] w-max">
+                    <!-- Item 1 -->
+                    <div class="timeline-item w-72 md:w-96 shrink-0 pt-0">
+                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-sun border-4 border-ink flex items-center justify-center font-bricolage font-bold text-xl md:text-2xl mb-8 md:mb-12 card-neo mx-auto transition-transform hover:scale-110">9A</div>
+                        <div class="border-2 border-ink bg-white p-6 md:p-8 card-neo text-center hover:-translate-y-2 transition-transform">
+                            <h3 class="font-bricolage font-bold text-xl md:text-2xl mb-3 text-cobalt">Virtual Lobby Opens</h3>
+                            <p class="font-medium text-ink/80 text-sm md:text-base">Virtual lobby and Discord go live. Join the server and complete your digital check-in.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Item 2 -->
+                    <div class="timeline-item w-72 md:w-96 shrink-0 pt-0">
+                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-cobalt text-cream border-4 border-ink flex items-center justify-center font-bricolage font-bold text-xl md:text-2xl mb-8 md:mb-12 card-neo mx-auto transition-transform hover:scale-110">10A</div>
+                        <div class="border-2 border-ink bg-white p-6 md:p-8 card-neo text-center hover:-translate-y-2 transition-transform">
+                            <h3 class="font-bricolage font-bold text-xl md:text-2xl mb-3 text-sun">Kickoff Ceremony</h3>
+                            <p class="font-medium text-ink/80 text-sm md:text-base">Opening ceremony and problem statements unlock. Hacking begins!</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="timeline-item w-72 md:w-96 shrink-0 pt-0">
+                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-cream border-4 border-ink flex items-center justify-center font-bricolage font-bold text-xl md:text-2xl mb-8 md:mb-12 card-neo mx-auto transition-transform hover:scale-110">1P</div>
+                        <div class="border-2 border-ink bg-white p-6 md:p-8 card-neo text-center hover:-translate-y-2 transition-transform">
+                            <h3 class="font-bricolage font-bold text-xl md:text-2xl mb-3 text-cobalt">Mentor Check-In</h3>
+                            <p class="font-medium text-ink/80 text-sm md:text-base">Mentors join the Discord. Book a 1-on-1 slot or drop into the open help channel.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 4 -->
+                    <div class="timeline-item w-72 md:w-96 shrink-0 pt-0">
+                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#FF5A3C] text-cream border-4 border-ink flex items-center justify-center font-bricolage font-bold text-xl md:text-2xl mb-8 md:mb-12 card-neo mx-auto transition-transform hover:scale-110">7P</div>
+                        <div class="border-2 border-ink bg-white p-6 md:p-8 card-neo text-center hover:-translate-y-2 transition-transform">
+                            <h3 class="font-bricolage font-bold text-xl md:text-2xl mb-3">Late-Night Support</h3>
+                            <p class="font-medium text-ink/80 text-sm md:text-base">Mentor availability continues. Stretch break activities and community channels stay active.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 5 -->
+                    <div class="timeline-item w-72 md:w-96 shrink-0 pt-0">
+                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-ink text-sun border-4 border-ink flex items-center justify-center font-bricolage font-bold text-xl md:text-2xl mb-8 md:mb-12 card-neo mx-auto transition-transform hover:scale-110">12A</div>
+                        <div class="border-2 border-ink bg-white p-6 md:p-8 card-neo text-center hover:-translate-y-2 transition-transform">
+                            <h3 class="font-bricolage font-bold text-xl md:text-2xl mb-3 text-sun">Midnight Check-In</h3>
+                            <p class="font-medium text-ink/80 text-sm md:text-base">Optional async check-in on Discord. Organizers online for questions and support.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 6 -->
+                    <div class="timeline-item w-72 md:w-96 shrink-0 pt-0">
+                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-sun border-4 border-ink flex items-center justify-center font-bricolage font-bold text-xl md:text-2xl mb-8 md:mb-12 card-neo mx-auto transition-transform hover:scale-110">10A</div>
+                        <div class="border-2 border-ink bg-white p-6 md:p-8 card-neo text-center hover:-translate-y-2 transition-transform">
+                            <h3 class="font-bricolage font-bold text-xl md:text-2xl mb-3 text-cobalt">Submissions Close</h3>
+                            <p class="font-medium text-ink/80 text-sm md:text-base">Hacking officially ends. All repos and decks must be submitted.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 7 -->
+                    <div class="timeline-item w-72 md:w-96 shrink-0 pt-0 pr-6 md:pr-12">
+                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-cobalt text-cream border-4 border-ink flex items-center justify-center font-bricolage font-bold text-xl md:text-2xl mb-8 md:mb-12 card-neo mx-auto transition-transform hover:scale-110">1:30P</div>
+                        <div class="border-2 border-ink bg-white p-6 md:p-8 card-neo text-center hover:-translate-y-2 transition-transform">
+                            <h3 class="font-bricolage font-bold text-xl md:text-2xl mb-3 text-sun">Closing Ceremony</h3>
+                            <p class="font-medium text-ink/80 text-sm md:text-base">Project expo finishes, winners announced, and prizes distributed.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. Prizes -->
+    <section id="prizes" class="py-24 px-6 bg-sun">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="font-bricolage font-extrabold text-4xl md:text-5xl mb-12 text-center fade-up-item">Prizes</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Grand Prize (Feature Card) -->
+                <div class="md:col-span-3 border-4 border-ink bg-cream p-10 card-neo text-center fade-up-item relative overflow-hidden group">
+                    <div class="absolute -right-10 -top-10 w-48 h-48 bg-sun rounded-full opacity-30 group-hover:scale-150 transition-transform duration-700"></div>
+                    <div class="relative z-10 flex flex-col items-center">
+                        <div class="w-20 h-20 bg-cobalt border-2 border-ink rounded-full flex items-center justify-center mb-6">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FFF8EB" stroke-width="2"><path d="M12 15l-3.5-3.5L12 8l3.5 3.5L12 15z"/><path d="M12 2v20M2 12h20"/></svg>
+                        </div>
+                        <h3 class="font-bricolage font-black text-4xl md:text-5xl mb-2 text-cobalt">Grand Prize</h3>
+                        <p class="text-2xl font-bold mb-4">$5,000 Team Cash Prize</p>
+                        <p class="font-medium text-lg max-w-2xl text-ink/80">Plus automatic entry into the CampusCrafters regional finals, premium swag kits, and 1-on-1 mentorship with our keynote judges.</p>
+                    </div>
+                </div>
+
+                <!-- Track Winner 1 -->
+                <div class="border-2 border-ink bg-white p-8 card-neo text-center fade-up-item hover:-translate-y-2">
+                    <h4 class="font-bricolage font-bold text-2xl mb-2">FinTech Winner</h4>
+                    <p class="text-xl font-bold text-cobalt mb-4">$1,500 Cash</p>
+                    <p class="font-medium text-ink/80">Sponsored hardware bundles and exclusive API credits.</p>
+                </div>
+                
+                <!-- Track Winner 2 -->
+                <div class="border-2 border-ink bg-white p-8 card-neo text-center fade-up-item hover:-translate-y-2" style="transition-delay: 100ms;">
+                    <h4 class="font-bricolage font-bold text-2xl mb-2">Social Good</h4>
+                    <p class="text-xl font-bold text-cobalt mb-4">$1,500 Cash</p>
+                    <p class="font-medium text-ink/80">Funding to deploy your project locally and non-profit mentorship.</p>
+                </div>
+
+                <!-- Best Beginner -->
+                <div class="border-2 border-ink bg-white p-8 card-neo text-center fade-up-item hover:-translate-y-2" style="transition-delay: 200ms;">
+                    <h4 class="font-bricolage font-bold text-2xl mb-2">Best Beginner</h4>
+                    <p class="text-xl font-bold text-cobalt mb-4">Mechanical Keyboards</p>
+                    <p class="font-medium text-ink/80">Premium custom keyboards and lifetime Pro accounts for the whole team.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. Judges and Mentors -->
+    <section class="border-t-2 border-ink py-24 px-6 bg-white">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="font-bricolage font-extrabold text-4xl md:text-5xl mb-12 text-center fade-up-item">Judges & Mentors</h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <!-- Person 1 -->
+                <div class="border-2 border-ink bg-cream card-neo overflow-hidden fade-up-item">
+                    <div class="aspect-square bg-ink/5 border-b-2 border-ink flex items-center justify-center relative group">
+                        <img src="https://placehold.co/400x400/FFF8EB/111111?text=Photo" alt="Placeholder Photo" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300">
+                    </div>
+                    <div class="p-4 bg-cream">
+                        <h4 class="font-bricolage font-bold text-xl leading-tight mb-1">Jane Doe</h4>
+                        <p class="text-sm font-medium text-ink/70">CTO @ TechCorp</p>
+                    </div>
+                </div>
+                
+                <!-- Person 2 -->
+                <div class="border-2 border-ink bg-cream card-neo overflow-hidden fade-up-item" style="transition-delay: 100ms;">
+                    <div class="aspect-square bg-ink/5 border-b-2 border-ink flex items-center justify-center relative group">
+                        <img src="https://placehold.co/400x400/FFF8EB/111111?text=Photo" alt="Placeholder Photo" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300">
+                    </div>
+                    <div class="p-4 bg-cream">
+                        <h4 class="font-bricolage font-bold text-xl leading-tight mb-1">John Smith</h4>
+                        <p class="text-sm font-medium text-ink/70">Lead Dev @ Studio</p>
+                    </div>
+                </div>
+
+                <!-- Person 3 -->
+                <div class="border-2 border-ink bg-cream card-neo overflow-hidden fade-up-item" style="transition-delay: 200ms;">
+                    <div class="aspect-square bg-ink/5 border-b-2 border-ink flex items-center justify-center relative group">
+                        <img src="https://placehold.co/400x400/FFF8EB/111111?text=Photo" alt="Placeholder Photo" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300">
+                    </div>
+                    <div class="p-4 bg-cream">
+                        <h4 class="font-bricolage font-bold text-xl leading-tight mb-1">Alice Johnson</h4>
+                        <p class="text-sm font-medium text-ink/70">Founder @ Web3App</p>
+                    </div>
+                </div>
+
+                <!-- Person 4 -->
+                <div class="border-2 border-ink bg-cream card-neo overflow-hidden fade-up-item" style="transition-delay: 300ms;">
+                    <div class="aspect-square bg-ink/5 border-b-2 border-ink flex items-center justify-center relative group">
+                        <img src="https://placehold.co/400x400/FFF8EB/111111?text=Photo" alt="Placeholder Photo" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300">
+                    </div>
+                    <div class="p-4 bg-cream">
+                        <h4 class="font-bricolage font-bold text-xl leading-tight mb-1">Robert Lee</h4>
+                        <p class="text-sm font-medium text-ink/70">Design Lead @ Agency</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10. Meet the Organizers -->
+    <section class="border-t-2 border-ink py-24 px-6 bg-cream">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="font-bricolage font-extrabold text-4xl md:text-5xl mb-12 text-center fade-up-item">Meet the Organizers</h2>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-6">
+                <!-- Generative placeholder blocks for organizers -->
+                <div class="border-2 border-ink bg-white card-neo overflow-hidden fade-up-item">
+                    <div class="aspect-square bg-ink/10 flex items-center justify-center"><span class="text-sm font-bold text-ink/50">Photo</span></div>
+                    <div class="p-3 text-center"><h4 class="font-bricolage font-bold text-lg mb-1">Organizer 1</h4><p class="text-xs font-medium text-ink/70">Co-Director</p></div>
+                </div>
+                <div class="border-2 border-ink bg-white card-neo overflow-hidden fade-up-item" style="transition-delay: 50ms;">
+                    <div class="aspect-square bg-ink/10 flex items-center justify-center"><span class="text-sm font-bold text-ink/50">Photo</span></div>
+                    <div class="p-3 text-center"><h4 class="font-bricolage font-bold text-lg mb-1">Organizer 2</h4><p class="text-xs font-medium text-ink/70">Logistics</p></div>
+                </div>
+                <div class="border-2 border-ink bg-white card-neo overflow-hidden fade-up-item" style="transition-delay: 100ms;">
+                    <div class="aspect-square bg-ink/10 flex items-center justify-center"><span class="text-sm font-bold text-ink/50">Photo</span></div>
+                    <div class="p-3 text-center"><h4 class="font-bricolage font-bold text-lg mb-1">Organizer 3</h4><p class="text-xs font-medium text-ink/70">Sponsorships</p></div>
+                </div>
+                <div class="border-2 border-ink bg-white card-neo overflow-hidden fade-up-item" style="transition-delay: 150ms;">
+                    <div class="aspect-square bg-ink/10 flex items-center justify-center"><span class="text-sm font-bold text-ink/50">Photo</span></div>
+                    <div class="p-3 text-center"><h4 class="font-bricolage font-bold text-lg mb-1">Organizer 4</h4><p class="text-xs font-medium text-ink/70">Hacker Exp.</p></div>
+                </div>
+                <div class="border-2 border-ink bg-white card-neo overflow-hidden fade-up-item" style="transition-delay: 200ms;">
+                    <div class="aspect-square bg-ink/10 flex items-center justify-center"><span class="text-sm font-bold text-ink/50">Photo</span></div>
+                    <div class="p-3 text-center"><h4 class="font-bricolage font-bold text-lg mb-1">Organizer 5</h4><p class="text-xs font-medium text-ink/70">Marketing</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 11. Virtual Event Setup -->
+    <section class="border-t-2 border-ink py-24 px-6 bg-white">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="font-bricolage font-extrabold text-4xl md:text-5xl mb-12 fade-up-item">Virtual Event Setup</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="card-neo border-2 border-ink bg-cream p-8 fade-up-item">
+                    <h3 class="font-bricolage font-bold text-2xl mb-6 text-cobalt">What you need</h3>
+                    <ul class="space-y-3 font-medium">
+                        <li class="flex items-start gap-3"><span class="text-cobalt font-black text-xl mt-0.5">✓</span> A laptop and a stable internet connection</li>
+                        <li class="flex items-start gap-3"><span class="text-cobalt font-black text-xl mt-0.5">✓</span> A GitHub account for your project repository</li>
+                        <li class="flex items-start gap-3"><span class="text-cobalt font-black text-xl mt-0.5">✓</span> A Discord account for communication and mentor sessions</li>
+                        <li class="flex items-start gap-3"><span class="text-cobalt font-black text-xl mt-0.5">✓</span> Your CampusCrafters account for dashboard access</li>
+                    </ul>
+                </div>
+                <div class="card-neo border-2 border-ink bg-cream p-8 fade-up-item" style="transition-delay:100ms;">
+                    <h3 class="font-bricolage font-bold text-2xl mb-6" style="color:#FF5A3C;">What we provide</h3>
+                    <ul class="space-y-3 font-medium">
+                        <li class="flex items-start gap-3"><span class="font-black text-xl mt-0.5" style="color:#FF5A3C;">✓</span> Participant dashboard with team and submission tools</li>
+                        <li class="flex items-start gap-3"><span class="font-black text-xl mt-0.5" style="color:#FF5A3C;">✓</span> Dedicated Discord server with mentor and organizer channels</li>
+                        <li class="flex items-start gap-3"><span class="font-black text-xl mt-0.5" style="color:#FF5A3C;">✓</span> Real-time announcements and help desk</li>
+                        <li class="flex items-start gap-3"><span class="font-black text-xl mt-0.5" style="color:#FF5A3C;">✓</span> API credits and cloud platform trial access from sponsors</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 12. FAQ -->
+    <section id="faq" class="border-t-2 border-ink py-24 px-6 bg-sun">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="font-bricolage font-extrabold text-4xl md:text-5xl mb-12 text-center fade-up-item">Frequently Asked Questions</h2>
+            
+            <div class="space-y-4">
+                <!-- FAQ 0: Online -->
+                <div class="accordion-item border-2 border-ink bg-white card-neo fade-up-item">
+                    <button class="accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl md:text-2xl hover:bg-cream transition-colors">
+                        Is this hackathon online or in-person?
+                        <span class="text-cobalt icon-rotate font-black text-3xl leading-none ml-4">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-inner px-6 pb-6 font-medium text-ink/80">
+                            <p>Campus Sprint is a fully online, 24-hour hackathon. You participate from wherever you are — no physical attendance required. Everything runs through your CampusCrafters dashboard, GitHub, and our Discord server.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 1 -->
+                <div class="accordion-item border-2 border-ink bg-white card-neo fade-up-item">
+                    <button class="accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl md:text-2xl hover:bg-cream transition-colors">
+                        Who can join?
+                        <span class="text-cobalt icon-rotate font-black text-3xl leading-none ml-4">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-inner px-6 pb-6 font-medium text-ink/80">
+                            <p>Only current students of [COLLEGE]. No one from outside the college can take part for this specific edition.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 2 -->
+                <div class="accordion-item border-2 border-ink bg-white card-neo fade-up-item">
+                    <button class="accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl md:text-2xl hover:bg-cream transition-colors">
+                        Can I come without a team?
+                        <span class="text-cobalt icon-rotate font-black text-3xl leading-none ml-4">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-inner px-6 pb-6 font-medium text-ink/80">
+                            <p>You can register on your own, but every team must have exactly 2 to 5 members. We will have team-forming channels on CampusCrafters before the event begins.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 3 -->
+                <div class="accordion-item border-2 border-ink bg-white card-neo fade-up-item">
+                    <button class="accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl md:text-2xl hover:bg-cream transition-colors">
+                        Do I need coding experience?
+                        <span class="text-cobalt icon-rotate font-black text-3xl leading-none ml-4">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-inner px-6 pb-6 font-medium text-ink/80">
+                            <p>Not at all! We have a dedicated Beginner Track, tons of mentors available on Discord to help you, and beginner workshops during the hackathon.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ 4 -->
+                <div class="accordion-item border-2 border-ink bg-white card-neo fade-up-item">
+                    <button class="accordion-btn w-full text-left p-6 flex justify-between items-center font-bricolage font-bold text-xl md:text-2xl hover:bg-cream transition-colors">
+                        Does it cost anything?
+                        <span class="text-cobalt icon-rotate font-black text-3xl leading-none ml-4">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-inner px-6 pb-6 font-medium text-ink/80">
+                            <p>Nope! The event is 100% free for all admitted students. The event is completely free. Swag kits are mailed to winners.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 text-center fade-up-item">
+                <a href="faq.html" class="btn-neo bg-white text-ink font-bricolage font-bold text-lg px-8 py-3.5 border-2 border-ink inline-block">
+                    Browse All 20+ Questions on Full FAQ Page →
+                </a>
+            </div>
+            
+            <p class="text-center mt-8 font-medium text-lg fade-up-item">
+                Still have questions? Reach out to us at <a href="mailto:support@campuscrafters.com" class="font-bold underline decoration-2 underline-offset-4 hover:text-cobalt">support@campuscrafters.com</a>
+            </p>
+        </div>
+    </section>
+
+    <!-- 14. Final CTA & 15. Footer -->
+    <section class="border-t-2 border-ink bg-cobalt py-20 px-6">
+        <div class="max-w-7xl mx-auto text-center fade-up-item text-cream border-b-2 border-ink/30 pb-20 mb-12">
+            <h2 class="font-bricolage font-extrabold text-5xl md:text-6xl mb-6">Ready to build?</h2>
+            <p class="text-2xl font-medium mb-10"><span class="bg-sun text-ink px-3 py-1 border-2 border-ink font-bold inline-block transform -rotate-2">142 spots left</span>. Registration closes Nov 15.</p>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+                <button id="final-cta-btn" class="btn-neo bg-sun text-ink font-bricolage font-bold text-2xl px-12 py-5 border-2 border-ink w-full sm:w-auto inline-block">Register with CampusCrafters</button>
+            </div>
+            <div class="mt-8 flex justify-center gap-6 text-sm font-bold">
+                <a href="#" class="hover:text-sun underline decoration-2 underline-offset-4 flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    Add to Calendar
+                </a>
+                <a href="#" class="hover:text-sun underline decoration-2 underline-offset-4 flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                    Share Event
+                </a>
+            </div>
+        </div>
+
+        <footer class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 text-cream">
+            <div class="md:col-span-1">
+                <a href="#" class="font-bricolage font-bold text-2xl tracking-tight flex items-center gap-2 mb-4">
+                    <div class="w-8 h-8 bg-sun border-2 border-ink rounded-full flex items-center justify-center">
+                        <div class="w-3 h-3 bg-cobalt rounded-full"></div>
+                    </div>
+                    Campus Sprint
+                </a>
+                <p class="font-bold text-sm mb-1">A CampusCrafters initiative.</p>
+                <p class="text-sm opacity-80">Create. Connect. Lead.</p>
+            </div>
+            
+            <div>
+                <h4 class="font-bricolage font-bold text-lg mb-4 text-sun">Event</h4>
+                <ul class="space-y-3 text-sm font-medium">
+                    <li><a href="#tracks" class="hover:underline decoration-2 underline-offset-4">Tracks</a></li>
+                    <li><a href="#schedule" class="hover:underline decoration-2 underline-offset-4">Schedule</a></li>
+                    <li><a href="#prizes" class="hover:underline decoration-2 underline-offset-4">Prizes</a></li>
+                    <li><a href="#faq" class="hover:underline decoration-2 underline-offset-4">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-bricolage font-bold text-lg mb-4 text-sun">Legal</h4>
+                <ul class="space-y-3 text-sm font-medium">
+                    <li><a href="#" class="hover:underline decoration-2 underline-offset-4">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:underline decoration-2 underline-offset-4">Terms of Service</a></li>
+                    <li><a href="#" class="hover:underline decoration-2 underline-offset-4">Code of Conduct</a></li>
+                    <li><a href="#" class="hover:underline decoration-2 underline-offset-4">Rules & Eligibility</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-bricolage font-bold text-lg mb-4 text-sun">Support</h4>
+                <ul class="space-y-3 text-sm font-medium">
+                    <li><a href="mailto:support@campuscrafters.com" class="hover:underline decoration-2 underline-offset-4">support@campuscrafters.com</a></li>
+                    <li class="opacity-80">Participant Discord Server</li>
+                    <li class="opacity-80 mt-4 italic text-xs">Online help desk active during the event.</li>
+                </ul>
+            </div>
+            
+            <div class="md:col-span-4 border-t-2 border-ink/30 pt-6 mt-6 flex justify-between items-center text-xs font-bold opacity-80">
+                <p>© 2026 CampusCrafters.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-sun">Twitter</a>
+                    <a href="#" class="hover:text-sun">Instagram</a>
+                    <a href="#" class="hover:text-sun">LinkedIn</a>
+                </div>
+            </div>
+        </footer>
+    </section>
+
+    <!-- GSAP Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <!-- Phase 3: CampusSprint State & Mock Data (IIFE, no ES modules) -->
+    <script src="js/utils/storage.js"></script>
+    <script src="js/state/state-config.js"></script>
+    <script src="js/state/state-manager.js"></script>
+    <script src="js/data/tracks.js"></script>
+    <script src="js/data/problem-statements.js"></script>
+    <script src="js/data/announcements.js"></script>
+    <script src="js/data/participants.js"></script>
+    <script src="js/data/teams.js"></script>
+    <script src="js/data/submissions.js"></script>
+    <script src="js/data/index.js"></script>
+    
+    <!-- Phase 4: Authentication & Registration Stepper -->
+    <script src="js/auth/auth-service.js"></script>
+    <script src="js/auth/auth-modal.js"></script>
+    <script src="js/registration/registration-service.js"></script>
+    <script src="js/registration/waitlist-modal.js"></script>
+    <script src="js/registration/registration-stepper.js"></script>
+
+    <!-- Phase 6: Teams & Dashboard Services -->
+    <script src="js/teams/team-service.js"></script>
+    <script src="js/dashboard/dashboard-service.js"></script>
+
+    <!-- Phase 7: Problem Selection & Project Submission Services -->
+    <script src="js/submissions/problem-selection-service.js"></script>
+    <script src="js/submissions/submission-service.js"></script>
+
+    <!-- Shared Navigation & CTA Controller -->
+    <script src="js/utils/nav.js"></script>
+
+    <!-- Developer State Switcher (Phase 3 — dev only, hidden unless ?dev=1) -->
+    <script src="js/dev/state-switcher.js"></script>
+    
+    <!-- Javascript for Interactions -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Fade-Up on Scroll
+            const fadeElements = document.querySelectorAll('.fade-up-item');
+            
+            const fadeObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { 
+                threshold: 0.1,
+                rootMargin: "0px 0px -50px 0px"
+            });
+
+            fadeElements.forEach(el => {
+                fadeObserver.observe(el);
+            });
+
+            // 3. Accordion Logic
+            const accordionBtns = document.querySelectorAll('.accordion-btn');
+            accordionBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const content = btn.nextElementSibling;
+                    const icon = btn.querySelector('.icon-rotate');
+                    
+                    // Toggle current
+                    content.classList.toggle('open');
+                    if (icon) icon.classList.toggle('open');
+                });
+            });
+
+            // 4. GSAP Horizontal Scroll Timeline
+            gsap.registerPlugin(ScrollTrigger);
+
+            const timelineTrack = document.querySelector(".timeline-track");
+            const timelineLine = document.querySelector(".timeline-line");
+
+            // Respect user's motion preferences
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            if (timelineTrack && !prefersReducedMotion) {
+                // Ensure the background line covers the full scrollable width
+                const updateLineWidth = () => {
+                    if (timelineLine) timelineLine.style.width = timelineTrack.scrollWidth + 'px';
+                };
+                updateLineWidth();
+                window.addEventListener('resize', updateLineWidth);
+
+                // Calculate horizontal translate amount based on track width
+                const getScrollAmount = () => -(timelineTrack.scrollWidth - window.innerWidth + 80);
+
+                gsap.to(timelineTrack, {
+                    x: getScrollAmount,
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: "#schedule-container",
+                        start: "center center", 
+                        end: () => `+=${timelineTrack.scrollWidth}`, // Scroll duration based on track width
+                        pin: true,
+                        scrub: 1, // Smooth scrubbing
+                        invalidateOnRefresh: true, // Recalculates on resize
+                        anticipatePin: 1
+                    }
+                });
+            } else if (timelineTrack) {
+                // Fallback for users preferring reduced motion
+                const wrapper = document.querySelector('.timeline-wrapper');
+                wrapper.style.overflowX = "auto";
+                wrapper.style.paddingBottom = "20px";
+            }
+
+            // 5. Mobile Navigation Drawer
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileDrawer = document.getElementById('mobile-drawer');
+            const drawerBackdrop = mobileDrawer ? mobileDrawer.querySelector('.drawer-backdrop') : null;
+            const drawerClose = document.getElementById('drawer-close-btn');
+            const drawerLinks = mobileDrawer ? mobileDrawer.querySelectorAll('a[href^="#"]') : [];
+
+            function openDrawer() {
+                if (!mobileDrawer) return;
+                mobileDrawer.classList.add('open');
+                document.body.style.overflow = 'hidden';
+                if (mobileMenuBtn) mobileMenuBtn.setAttribute('aria-expanded', 'true');
+            }
+            function closeDrawer() {
+                if (!mobileDrawer) return;
+                mobileDrawer.classList.remove('open');
+                document.body.style.overflow = '';
+                if (mobileMenuBtn) mobileMenuBtn.setAttribute('aria-expanded', 'false');
+            }
+            if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', openDrawer);
+            if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
+            if (drawerBackdrop) drawerBackdrop.addEventListener('click', closeDrawer);
+            drawerLinks.forEach(link => link.addEventListener('click', closeDrawer));
+            document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+            // 6. Countdown Timer
+            // Update KICKOFF_DATE when the actual event date is confirmed.
+            const KICKOFF_DATE = new Date('2026-11-15T10:00:00+05:30');
+
+            function updateCountdown() {
+                const now = new Date();
+                const diff = KICKOFF_DATE - now;
+                const cdLabel = document.getElementById('countdown-label');
+                const cdDisplay = document.getElementById('countdown-display');
+                if (!cdDisplay) return;
+                if (diff <= 0) {
+                    if (cdLabel) cdLabel.textContent = 'Event is Live!';
+                    document.getElementById('cd-days').textContent = '00';
+                    document.getElementById('cd-hours').textContent = '00';
+                    document.getElementById('cd-mins').textContent = '00';
+                    document.getElementById('cd-secs').textContent = '00';
+                    return;
+                }
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const secs = Math.floor((diff % (1000 * 60)) / 1000);
+                document.getElementById('cd-days').textContent = String(days).padStart(2, '0');
+                document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0');
+                document.getElementById('cd-mins').textContent = String(mins).padStart(2, '0');
+                document.getElementById('cd-secs').textContent = String(secs).padStart(2, '0');
+            }
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+
+            // 7. State Manager UI Binding & CTA Dispatcher (Phase 3 + Phase 4)
+            if (window.CampusSprint && window.CampusSprint.stateManager) {
+                const SM = window.CampusSprint.stateManager;
+                const Config = window.CampusSprint.Config;
+                const Auth = window.CampusSprint.Auth;
+                const AuthModal = window.CampusSprint.AuthModal;
+                const Stepper = window.CampusSprint.RegistrationStepper;
+                const Waitlist = window.CampusSprint.WaitlistModal;
+                const META = Config.EVENT_STATE_META;
+
+                // Unified CTA click handler
+                window.CampusSprint.handleCtaAction = function(actionType = 'register') {
+                    const eventState = SM.getEventState();
+                    const visitorState = SM.getVisitorState();
+
+                    if (actionType === 'login') {
+                        if (AuthModal) AuthModal.open('login');
+                        return;
+                    }
+
+                    if (actionType === 'logout') {
+                        if (Auth) Auth.logout();
+                        return;
+                    }
+
+                    // Event State Restrictions
+                    if (eventState === Config.EVENT_STATES.TEASER) {
+                        alert('Event Kickoff is on Nov 15! Registration opens soon.');
+                        return;
+                    }
+
+                    if (eventState === Config.EVENT_STATES.FULL) {
+                        if (Waitlist) Waitlist.open();
+                        return;
+                    }
+
+                    if (eventState === Config.EVENT_STATES.REG_CLOSED) {
+                        alert('Registration is currently closed for this hackathon.');
+                        return;
+                    }
+
+                    if (eventState === Config.EVENT_STATES.EVENT_LIVE) {
+                        if (visitorState === Config.VISITOR_STATES.REGISTERED) {
+                            alert('The hackathon is live! Problem statements are active. Access your team channels on Discord.');
+                        } else {
+                            alert('The hackathon is currently running live. Registration has closed.');
+                        }
+                        return;
+                    }
+
+                    if (eventState === Config.EVENT_STATES.JUDGING) {
+                        alert('Submissions are currently under review by judges.');
+                        return;
+                    }
+
+                    if (eventState === Config.EVENT_STATES.RESULTS) {
+                        alert('Results and winners have been announced! Check the Prizes section for winners.');
+                        return;
+                    }
+
+                    // Normal Registration Window (REG_OPEN or ALMOST_FULL)
+                    if (visitorState === Config.VISITOR_STATES.LOGGED_OUT) {
+                        if (AuthModal) AuthModal.open('signup');
+                    } else if (visitorState === Config.VISITOR_STATES.LOGGED_IN_UNREGISTERED) {
+                        if (Stepper) Stepper.open();
+                    } else if (visitorState === Config.VISITOR_STATES.REGISTERED) {
+                        if (Stepper) Stepper.open(); // opens directly in ticket/badge view
+                    }
+                };
+
+                // Wire click listeners
+                const heroBtn = document.getElementById('hero-cta-btn');
+                const navBtn = document.getElementById('nav-cta-btn');
+                const drawerBtn = document.getElementById('drawer-cta-btn');
+                const finalBtn = document.getElementById('final-cta-btn');
+                const navLoginBtn = document.getElementById('nav-login-btn');
+                const drawerLoginBtn = document.getElementById('drawer-login-btn');
+                const navLogoutBtn = document.getElementById('nav-logout-btn');
+                const drawerLogoutBtn = document.getElementById('drawer-logout-btn');
+
+                if (heroBtn) heroBtn.addEventListener('click', () => window.CampusSprint.handleCtaAction('register'));
+                if (navBtn) navBtn.addEventListener('click', () => window.CampusSprint.handleCtaAction('register'));
+                if (drawerBtn) drawerBtn.addEventListener('click', () => window.CampusSprint.handleCtaAction('register'));
+                if (finalBtn) finalBtn.addEventListener('click', () => window.CampusSprint.handleCtaAction('register'));
+
+                if (navLoginBtn) navLoginBtn.addEventListener('click', () => window.CampusSprint.handleCtaAction('login'));
+                if (drawerLoginBtn) drawerLoginBtn.addEventListener('click', () => window.CampusSprint.handleCtaAction('login'));
+                if (navLogoutBtn) navLogoutBtn.addEventListener('click', () => window.CampusSprint.handleCtaAction('logout'));
+                if (drawerLogoutBtn) drawerLogoutBtn.addEventListener('click', () => window.CampusSprint.handleCtaAction('logout'));
+
+                // Reactive UI subscription
+                SM.subscribe((snapshot) => {
+                    const eMeta = META[snapshot.eventState];
+                    if (!eMeta) return;
+
+                    const isLoggedIn = snapshot.visitorState !== Config.VISITOR_STATES.LOGGED_OUT;
+                    const isRegistered = snapshot.visitorState === Config.VISITOR_STATES.REGISTERED;
+
+                    // Update Auth/Login buttons in Nav & Drawer
+                    if (navLoginBtn) navLoginBtn.style.display = isLoggedIn ? 'none' : 'block';
+                    if (navLogoutBtn) navLogoutBtn.style.display = isLoggedIn ? 'inline' : 'none';
+                    if (drawerLoginBtn) drawerLoginBtn.style.display = isLoggedIn ? 'none' : 'block';
+                    if (drawerLogoutBtn) drawerLogoutBtn.style.display = isLoggedIn ? 'block' : 'none';
+
+                    // Dashboard link shows up ONLY when logged in
+                    const dashLinks = document.querySelectorAll('.nav-dashboard-link, a[href*="dashboard.html"]');
+                    dashLinks.forEach(link => {
+                        if (link.closest('nav') || link.closest('#mobile-drawer') || link.closest('.drawer-panel') || link.classList.contains('nav-dashboard-link')) {
+                            link.style.display = isLoggedIn ? '' : 'none';
+                        }
+                    });
+
+                    // Compute CTA labels based on event and visitor states
+                    let heroText = eMeta.ctaLabel;
+                    let navText = 'Register';
+                    let isEnabled = eMeta.ctaEnabled;
+
+                    if (snapshot.eventState === Config.EVENT_STATES.FULL) {
+                        heroText = 'Join Priority Waitlist';
+                        navText = 'Waitlist';
+                        isEnabled = true;
+                    } else if (snapshot.eventState === Config.EVENT_STATES.REG_OPEN || snapshot.eventState === Config.EVENT_STATES.ALMOST_FULL) {
+                        if (snapshot.visitorState === Config.VISITOR_STATES.LOGGED_OUT) {
+                            heroText = 'Register with CampusCrafters';
+                            navText = 'Register';
+                            isEnabled = true;
+                        } else if (snapshot.visitorState === Config.VISITOR_STATES.LOGGED_IN_UNREGISTERED) {
+                            heroText = 'Complete Your Registration';
+                            navText = 'Complete Reg';
+                            isEnabled = true;
+                        } else if (snapshot.visitorState === Config.VISITOR_STATES.REGISTERED) {
+                            heroText = 'View Registration Pass 🎟️';
+                            navText = '✓ Registered';
+                            isEnabled = true;
+                        }
+                    } else if (snapshot.eventState === Config.EVENT_STATES.EVENT_LIVE) {
+                        if (isRegistered) {
+                            heroText = 'Open Live Event Discord';
+                            navText = 'Discord';
+                            isEnabled = true;
+                        } else {
+                            heroText = 'Registration Closed (Live)';
+                            navText = 'Closed';
+                            isEnabled = false;
+                        }
+                    }
+
+                    if (heroBtn) {
+                        heroBtn.textContent = heroText;
+                        heroBtn.disabled = !isEnabled;
+                        heroBtn.style.opacity = isEnabled ? '1' : '0.6';
+                        heroBtn.style.cursor = isEnabled ? 'pointer' : 'not-allowed';
+                    }
+                    if (finalBtn) {
+                        finalBtn.textContent = heroText;
+                        finalBtn.disabled = !isEnabled;
+                        finalBtn.style.opacity = isEnabled ? '1' : '0.6';
+                        finalBtn.style.cursor = isEnabled ? 'pointer' : 'not-allowed';
+                    }
+                    if (navBtn) {
+                        navBtn.textContent = navText;
+                        navBtn.disabled = !isEnabled;
+                        navBtn.style.opacity = isEnabled ? '1' : '0.6';
+                        navBtn.style.cursor = isEnabled ? 'pointer' : 'not-allowed';
+                    }
+                    if (drawerBtn) {
+                        drawerBtn.textContent = navText;
+                        drawerBtn.disabled = !isEnabled;
+                        drawerBtn.style.opacity = isEnabled ? '1' : '0.6';
+                        drawerBtn.style.cursor = isEnabled ? 'pointer' : 'not-allowed';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

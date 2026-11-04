@@ -1,0 +1,2 @@
+"""CampusCrafters Integration Test Package."""
+
