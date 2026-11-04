@@ -4,6 +4,10 @@ import os
 from typing import List, Optional
 from dotenv import load_dotenv
 
+# Ensure root .env is loaded whether run from workspace root or backend directory
+root_env = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
+if os.path.exists(root_env):
+    load_dotenv(root_env)
 load_dotenv()
 
 
