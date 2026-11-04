@@ -9,7 +9,7 @@
     const isLocal = ['localhost', '127.0.0.1'].includes(global.location.hostname) || global.location.hostname === '';
     const API_BASE_URL = global.__CAMPUSCRAFTERS_API_BASE__ || (
         isLocal
-            ? 'http://localhost:5000/api/v1'
+            ? 'http://localhost:5001/api/v1'
             : 'https://api.campuscrafters.com/api/v1'
     );
 

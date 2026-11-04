@@ -15,6 +15,17 @@ class PostgresDatabase:
         if database_url.startswith("postgres://"):
             database_url = database_url.replace("postgres://", "postgresql://", 1)
 
+        # Fallback to psycopg (v3) if psycopg2 binary is unavailable
+        try:
+            import psycopg2  # noqa: F401
+        except ImportError:
+            try:
+                import psycopg  # noqa: F401
+                if database_url.startswith("postgresql://"):
+                    database_url = database_url.replace("postgresql://", "postgresql+psycopg://", 1)
+            except ImportError:
+                pass
+
         self.engine: Engine = create_engine(
             database_url,
             pool_size=10,
