@@ -23,12 +23,12 @@ class BaseConfig:
     SUBMISSION_DEADLINE_UTC: Optional[str] = os.getenv("SUBMISSION_DEADLINE_UTC") or None
 
     # CORS origins
-    cors_env = os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:3000,http://127.0.0.1:5500,http://localhost:5500")
+    cors_env = os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:3000,http://127.0.0.1:5500,http://localhost:5500,http://localhost:8000,http://127.0.0.1:8000")
     CORS_ALLOWED_ORIGINS: List[str] = [origin.strip() for origin in cors_env.split(",") if origin.strip()]
 
     # Database
     DATABASE_URL: Optional[str] = os.getenv("DATABASE_URL") or None
-    REPOSITORY_TYPE: str = "memory"
+    REPOSITORY_TYPE: str = os.getenv("REPOSITORY_TYPE", "database" if os.getenv("DATABASE_URL") else "memory")
 
     # Campus Crafter SSO Configuration (pending project lead)
     SSO_CLIENT_ID: Optional[str] = os.getenv("SSO_CLIENT_ID") or None
@@ -51,7 +51,7 @@ class DevelopmentConfig(BaseConfig):
     ENV: str = "development"
     DEBUG: bool = True
     LOG_LEVEL: str = "DEBUG"
-    REPOSITORY_TYPE: str = "memory"
+    REPOSITORY_TYPE: str = os.getenv("REPOSITORY_TYPE", "database" if os.getenv("DATABASE_URL") else "memory")
 
 
 class TestingConfig(BaseConfig):
