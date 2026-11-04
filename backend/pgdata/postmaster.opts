@@ -1,1 +1,0 @@
-/usr/local/lib/python3.13/dist-packages/pixeltable_pgserver/pginstall/bin/postgres "-D" "/home/claude/proj_extract/24hrs_hackthon/CampusCrafters_DiwaliHackthon_Platform/backend/pgdata" "-h" "" "-k" "/tmp/0b623768ec"
